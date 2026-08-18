@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Office of Small Failures — Tiny products, useful mistakes</title>
+<meta name="description" content="Office of Small Failures is a tiny internet product studio by James Yorke. Small experiments, useful mistakes, and products that earn the right to continue.">
+<style>
+:root{
+  --ink:#11100d;--paper:#f2ead7;--red:#ff5a3d;--blue:#80d8ff;--yellow:#ffe96a;
+  --green:#b8f28f;--pink:#ffb3d1;--violet:#9a87ff;--line:#161512;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  background:
+    repeating-linear-gradient(0deg,rgba(17,16,13,.03) 0,rgba(17,16,13,.03) 1px,transparent 1px,transparent 4px),
+    var(--paper);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+a{color:inherit}
+.page{max-width:1240px;margin:0 auto;padding:18px 18px 70px}
+.top{
+  border:2px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:12px;
+  padding:10px 12px;background:#fff9ec;box-shadow:4px 4px 0 var(--line)
+}
+.office{font-weight:950;letter-spacing:-.04em;text-transform:uppercase;font-size:14px}
+.meta{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.09em}
+.hero{position:relative;padding:42px 0 28px}
+.stamp{
+  display:inline-block;border:2px solid var(--line);background:var(--yellow);padding:7px 9px;
+  font:900 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;
+  letter-spacing:.08em;transform:rotate(-2deg);margin-bottom:16px
+}
+h1{
+  margin:0;font-size:clamp(70px,13vw,170px);line-height:.78;letter-spacing:-.095em;
+  text-transform:uppercase;max-width:1160px
+}
+h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line);text-shadow:7px 7px 0 var(--red)}
+.hero-copy{
+  max-width:720px;margin:32px 0 0 auto;font-size:clamp(20px,2.5vw,31px);line-height:1.2;
+  font-weight:800;letter-spacing:-.035em
+}
+.hero-copy mark{background:var(--green);padding:0 .16em}
+.notice{
+  position:absolute;right:1%;top:18%;width:170px;min-height:130px;background:#fffdf5;
+  border:2px solid var(--line);box-shadow:7px 7px 0 var(--blue);transform:rotate(5deg);padding:14px;
+  font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase
+}
+.notice b{display:block;font-size:13px;margin-bottom:8px}
+.ticker{
+  margin:18px 0 42px;border-top:2px solid var(--line);border-bottom:2px solid var(--line);
+  background:var(--line);color:#fff7e7;overflow:hidden;white-space:nowrap;transform:rotate(-.8deg) scale(1.02)
+}
+.ticker div{
+  display:inline-block;padding:9px 0;font:900 10px ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.1em
+}
+.ticker span{margin-right:30px}.ticker i{font-style:normal;color:var(--yellow)}
+.section-head{
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:2px solid var(--line);
+  padding-bottom:8px;margin-bottom:14px
+}
+.section-head h2{margin:0;font-size:17px;text-transform:uppercase;letter-spacing:-.03em}
+.section-head small{font:9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em}
+.cards{display:grid;gap:16px}
+.card{
+  display:grid;grid-template-columns:86px 1fr 150px;border:2px solid var(--line);background:#fffaf0;
+  text-decoration:none;min-height:250px;transition:.15s transform,.15s box-shadow
+}
+.card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--line)}
+.index{
+  border-right:2px solid var(--line);padding-top:18px;text-align:center;
+  font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace
+}
+.card:nth-child(1) .index{background:var(--pink)}
+.card:nth-child(2) .index{background:var(--blue)}
+.main{position:relative;padding:24px 28px;overflow:hidden}
+.label{
+  display:inline-block;border:2px solid var(--line);padding:6px 8px;
+  font:900 9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:18px
+}
+.card:nth-child(1) .label{background:var(--green)}
+.card:nth-child(2) .label{background:var(--yellow)}
+.main h3{margin:0;font-size:clamp(48px,7.5vw,90px);line-height:.86;letter-spacing:-.08em;text-transform:uppercase}
+.main p{max-width:710px;margin:18px 0 0;font-size:16px;line-height:1.5}
+.open{border-left:2px solid var(--line);display:grid;place-items:center;font-size:58px}
+.card:nth-child(1) .open{background:var(--blue)}
+.card:nth-child(2) .open{background:var(--violet)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+.note-card{border:2px solid var(--line);padding:20px;min-height:180px}
+.note-card.red{background:var(--red)}.note-card.yellow{background:var(--yellow)}
+.note-card h4{
+  margin:0 0 12px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em
+}
+.note-card p{margin:0;font-size:clamp(24px,3vw,38px);line-height:1.04;font-weight:900;letter-spacing:-.045em}
+.footer{
+  margin-top:38px;padding-top:10px;border-top:2px solid var(--line);
+  font:9px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.07em
+}
+@media(max-width:780px){
+  .page{padding:12px 12px 48px}.hero{padding-top:34px}
+  h1{font-size:clamp(66px,21vw,110px)}
+  h1 .outline{-webkit-text-stroke:2px var(--line);text-shadow:4px 4px 0 var(--red)}
+  .hero-copy{margin:26px 0 0;font-size:19px}
+  .notice{position:relative;right:auto;top:auto;width:150px;margin:26px 0 0 auto}
+  .card{grid-template-columns:48px 1fr}.open{display:none}.index{font-size:9px}
+  .main{padding:18px 18px 24px}.main h3{font-size:46px}.main p{font-size:14px}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div class="office">Office of Small Failures</div>
+    <div class="meta">James Yorke / Internet product studio / 2 case files open</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="stamp">Unofficial department for trying things</div>
+      <h1>Office of <span class="outline">Small Failures</span></h1>
+
+      <p class="hero-copy">
+        Tiny products. Public tests. Useful mistakes.
+        <mark>Nothing gets promoted just because somebody built it.</mark>
+      </p>
+
+      <aside class="notice">
+        <b>Internal memo</b>
+        Build the smallest thing that can still prove you wrong.
+      </aside>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div>
+        <span>BUILD <i>✶</i></span><span>TEST <i>✶</i></span><span>DISAPPOINT <i>✶</i></span>
+        <span>LEARN <i>✶</i></span><span>REPAIR <i>✶</i></span><span>KILL <i>✶</i></span>
+        <span>KEEP <i>✶</i></span><span>BUILD <i>✶</i></span>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-head">
+        <h2>Open case files</h2>
+        <small>things currently being allowed to exist</small>
+      </div>
+
+      <div class="cards">
+        <a class="card" href="/worthdoing/">
+          <div class="index">001</div>
+          <div class="main">
+            <div class="label">Under investigation</div>
+            <h3>WorthDoing</h3>
+            <p>
+              A small SEO decision machine. Put in a task, likely upside, effort and uncertainty.
+              Get back a commercial case and a verdict on whether it deserves to survive the backlog.
+            </p>
+          </div>
+          <div class="open">↗</div>
+        </a>
+
+        <a class="card" href="/should-i-automate-this/">
+          <div class="index">002</div>
+          <div class="main">
+            <div class="label">Automation triage</div>
+            <h3>Should I Automate This?</h3>
+            <p>
+              Describe a recurring task. The machine scores repetition, rules, exceptions, risk,
+              reversibility and human judgement — then tells you to automate it, assist it, or leave it alone.
+            </p>
+          </div>
+          <div class="open">↗</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="note-card red">
+        <h4>Office policy</h4>
+        <p>Failure is cheaper when the thing is still tiny.</p>
+      </div>
+      <div class="note-card yellow">
+        <h4>Promotion criteria</h4>
+        <p>Useful things get another week. Everything else gets paperwork.</p>
+      </div>
+    </section>
+
+    <div class="footer">
+      Office of Small Failures is a tiny product studio by James Yorke. More case files appear only when something has actually been built.
+    </div>
+  </main>
+</div>
+</body>
+</html>

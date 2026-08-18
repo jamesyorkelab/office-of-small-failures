@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Should I Automate This? — Office of Small Failures</title>
+<meta name="description" content="A lightweight diagnostic for deciding whether a recurring task should be automated, AI-assisted, or kept human.">
+<style>
+:root{
+  --ink:#12110e;
+  --paper:#f4edda;
+  --panel:#fff9ec;
+  --line:#191713;
+  --acid:#d9ff57;
+  --orange:#ff673f;
+  --blue:#8ad7ff;
+  --purple:#9a87ff;
+  --green:#a7ef83;
+  --yellow:#ffe66c;
+  --red:#ff9c96;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  color:var(--ink);
+  background:
+    linear-gradient(rgba(18,17,14,.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18,17,14,.028) 1px, transparent 1px),
+    var(--paper);
+  background-size:26px 26px;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 18px 72px}
+
+.topbar{
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;
+  border:2px solid var(--line);background:#fff9ec;padding:10px 12px;
+  box-shadow:4px 4px 0 var(--line);margin-bottom:40px
+}
+.brand{font-size:12px;font-weight:950;text-transform:uppercase;letter-spacing:-.03em}
+.topbar a{
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:10px;text-transform:uppercase;text-decoration:none;
+  border-bottom:1px solid var(--line)
+}
+
+.hero{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:end;
+  margin-bottom:28px
+}
+.case{
+  display:inline-block;border:2px solid var(--line);background:var(--yellow);
+  padding:7px 9px;font:900 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.08em;transform:rotate(-1.2deg);
+  margin-bottom:14px
+}
+h1{
+  margin:0;font-size:clamp(58px,9vw,118px);line-height:.84;
+  letter-spacing:-.085em;text-transform:uppercase
+}
+h1 .outline{
+  display:block;color:var(--paper);-webkit-text-stroke:2.5px var(--line);
+  text-shadow:6px 6px 0 var(--purple)
+}
+.hero-copy{
+  font-size:18px;line-height:1.5;font-weight:700;letter-spacing:-.02em;
+  margin:0 0 8px
+}
+.hero-copy mark{background:var(--acid);padding:0 .12em}
+
+.grid{
+  display:grid;grid-template-columns:minmax(0,1.08fr) minmax(340px,.92fr);
+  gap:18px;align-items:start
+}
+.card{
+  border:2px solid var(--line);background:var(--panel);padding:22px;
+  box-shadow:5px 5px 0 rgba(25,23,19,.98)
+}
+.section-head{
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-start;
+  border-bottom:2px solid var(--line);padding-bottom:10px;margin-bottom:18px
+}
+.kicker{
+  font:900 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px
+}
+h2{margin:0;font-size:24px;letter-spacing:-.045em}
+.step{
+  width:34px;height:34px;display:grid;place-items:center;border:2px solid var(--line);
+  background:var(--blue);font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace
+}
+
+.field{margin-bottom:16px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-size:12px;font-weight:900;margin-bottom:7px}
+input,select,textarea{
+  width:100%;border:2px solid var(--line);background:#fffdf6;color:var(--ink);
+  padding:12px 13px;font:inherit;border-radius:0;outline:none
+}
+textarea{min-height:76px;resize:vertical}
+input:focus,select:focus,textarea:focus{box-shadow:4px 4px 0 var(--acid)}
+.help{font-size:10px;color:#6f695e;margin-top:5px;line-height:1.45}
+
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+button{
+  appearance:none;border:2px solid var(--line);padding:12px 14px;
+  font:950 12px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;
+  text-transform:uppercase;letter-spacing:.03em;background:#fffdf6;
+  box-shadow:3px 3px 0 var(--line)
+}
+button.primary{background:var(--acid)}
+button.secondary{background:var(--blue)}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+
+.result{position:sticky;top:16px;overflow:hidden}
+.score-label{
+  font:900 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.09em
+}
+.score{
+  font-size:76px;line-height:.9;font-weight:1000;letter-spacing:-.08em;margin:8px 0 12px
+}
+.verdict{
+  display:inline-block;border:2px solid var(--line);padding:8px 10px;
+  font:950 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px
+}
+.verdict.auto{background:var(--green)}
+.verdict.assist{background:var(--yellow)}
+.verdict.human{background:var(--red)}
+
+.breakdown{
+  display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 18px
+}
+.metric{border:2px solid var(--line);padding:12px;background:#fffdf6}
+.metric span{
+  display:block;font:800 9px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.06em;color:#6d675d
+}
+.metric b{display:block;font-size:22px;margin-top:4px;letter-spacing:-.04em}
+
+.explanation{
+  border-top:2px solid var(--line);padding-top:15px;font-size:14px;line-height:1.55
+}
+.recommendation{
+  margin-top:14px;border:2px solid var(--line);background:var(--purple);
+  padding:14px;font-size:13px;line-height:1.5
+}
+.recommendation b{display:block;margin-bottom:6px;text-transform:uppercase;font-size:11px}
+.warning{
+  margin-top:14px;background:#fff2dd;border:2px solid var(--line);
+  padding:12px;font-size:11px;line-height:1.45
+}
+
+.footer-note{
+  margin-top:20px;border-top:2px solid var(--line);padding-top:10px;
+  font:800 9px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.06em
+}
+
+@media(max-width:880px){
+  .hero{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+  .result{position:static}
+}
+@media(max-width:620px){
+  .wrap{padding:12px 12px 50px}
+  h1{font-size:64px}
+  .hero-copy{font-size:16px}
+  .field-grid{grid-template-columns:1fr}
+  .card{padding:17px}
+  .score{font-size:62px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand">Office of Small Failures / Case File 002</div>
+    <a href="/">← Back to office</a>
+  </header>
+
+  <section class="hero">
+    <div>
+      <div class="case">Automation triage machine</div>
+      <h1>Should I <span class="outline">Automate This?</span></h1>
+    </div>
+    <p class="hero-copy">
+      Not every repetitive task deserves a workflow, an agent, or twelve API calls.
+      This tool decides whether to <mark>AUTOMATE</mark>, <mark>ASSIST</mark>, or keep the job human.
+    </p>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Input</div>
+          <h2>Describe the work</h2>
+        </div>
+        <div class="step">01</div>
+      </div>
+
+      <div class="field">
+        <label for="task">What is the recurring task?</label>
+        <textarea id="task">Turn weekly SEO performance exports into a stakeholder summary.</textarea>
+      </div>
+
+      <div class="field-grid">
+        <div class="field">
+          <label for="frequency">How often does it happen?</label>
+          <select id="frequency">
+            <option value="1">Less than monthly</option>
+            <option value="2">Monthly</option>
+            <option value="4" selected>Weekly</option>
+            <option value="6">Several times a week</option>
+            <option value="8">Daily or more</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="time">Time per occurrence</label>
+          <select id="time">
+            <option value="1">Under 10 minutes</option>
+            <option value="2">10–30 minutes</option>
+            <option value="4" selected>30–60 minutes</option>
+            <option value="6">1–2 hours</option>
+            <option value="8">More than 2 hours</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="clarity">How rule-based is it?</label>
+          <select id="clarity">
+            <option value="1">Mostly judgement / ambiguous</option>
+            <option value="3">Some repeatable rules</option>
+            <option value="6" selected>Mostly rule-based</option>
+            <option value="8">Highly deterministic</option>
+          </select>
+          <div class="help">Clear inputs + clear rules = easier to automate safely.</div>
+        </div>
+
+        <div class="field">
+          <label for="exceptions">How often are there exceptions?</label>
+          <select id="exceptions">
+            <option value="8">Almost never</option>
+            <option value="6" selected>Occasionally</option>
+            <option value="3">Often</option>
+            <option value="1">Constantly</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="risk">What happens if it gets it wrong?</label>
+          <select id="risk">
+            <option value="8">Very little</option>
+            <option value="6" selected>Annoying but recoverable</option>
+            <option value="3">Meaningful business/customer impact</option>
+            <option value="1">High-stakes / legal / financial / safety impact</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="reversible">Can mistakes be reversed?</label>
+          <select id="reversible">
+            <option value="8" selected>Yes, easily</option>
+            <option value="5">Usually</option>
+            <option value="2">Not easily</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="data">Are the inputs available digitally?</label>
+          <select id="data">
+            <option value="1">Mostly not</option>
+            <option value="3">Partly</option>
+            <option value="6" selected>Mostly</option>
+            <option value="8">Yes, clean and structured</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="judgement">How much human judgement matters?</label>
+          <select id="judgement">
+            <option value="8">Very little</option>
+            <option value="6">Some</option>
+            <option value="3" selected>A fair amount</option>
+            <option value="0">The judgement is the job</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" onclick="calculate()">Judge the task</button>
+        <button class="secondary" onclick="loadExample()">Load another example</button>
+      </div>
+
+      <div class="footer-note">
+        This is a triage tool, not an automation architecture. High-risk or irreversible work should keep a human approval step even when parts are automated.
+      </div>
+    </section>
+
+    <aside class="card result">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Decision</div>
+          <h2>Automation case</h2>
+        </div>
+        <div class="step">02</div>
+      </div>
+
+      <div class="score-label">Automation potential</div>
+      <div class="score" id="score">0/100</div>
+      <div id="verdict" class="verdict assist">CALCULATE</div>
+
+      <div class="breakdown">
+        <div class="metric">
+          <span>Repetition value</span>
+          <b id="rep">0</b>
+        </div>
+        <div class="metric">
+          <span>Rule clarity</span>
+          <b id="rule">0</b>
+        </div>
+        <div class="metric">
+          <span>Safety / reversibility</span>
+          <b id="safe">0</b>
+        </div>
+        <div class="metric">
+          <span>Human judgement fit</span>
+          <b id="humanFit">0</b>
+        </div>
+      </div>
+
+      <div class="explanation" id="explanation">
+        Describe the task and run the decision.
+      </div>
+
+      <div class="recommendation" id="recommendation">
+        <b>Best next move</b>
+        Your recommended workflow pattern will appear here.
+      </div>
+
+      <div class="warning" id="warning">
+        The tool deliberately penalises high-risk, irreversible work even when it is repetitive.
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+function n(id){ return parseFloat(document.getElementById(id).value) || 0; }
+
+function calculate(){
+  const task = document.getElementById('task').value.trim() || 'This task';
+  const frequency = n('frequency');
+  const time = n('time');
+  const clarity = n('clarity');
+  const exceptions = n('exceptions');
+  const risk = n('risk');
+  const reversible = n('reversible');
+  const data = n('data');
+  const judgement = n('judgement');
+
+  const repetition = Math.min(16, frequency + time);
+  const rules = Math.min(16, clarity + exceptions);
+  const safety = Math.min(16, risk + reversible);
+  const human = Math.min(16, data + judgement);
+
+  // Base potential out of 64 converted to 100.
+  let score = ((repetition + rules + safety + human) / 64) * 100;
+
+  // Hard penalties where automation is dangerous or fundamentally the wrong fit.
+  if (risk <= 1) score -= 22;
+  if (reversible <= 0) score -= 16;
+  if (judgement <= 0) score -= 18;
+  if (data <= 1) score -= 10;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+
+  let verdict, cls, explanation, recommendation, warning;
+
+  if (score >= 72 && risk >= 6 && judgement >= 3) {
+    verdict = 'AUTOMATE';
+    cls = 'auto';
+    explanation = `${task} is repetitive enough, rule-based enough, and recoverable enough to justify automating most of the workflow.`;
+    recommendation = `<b>Best next move</b>Map the workflow as trigger → inputs → deterministic rules → automated action → exception path → human review. Start with one narrow end-to-end version rather than automating every edge case.`;
+    warning = 'Keep a visible exception queue. Automation should make unusual cases easier to spot, not silently force them through.';
+  } else if (score >= 45) {
+    verdict = 'ASSIST';
+    cls = 'assist';
+    explanation = `${task} contains enough repeatable work to benefit from automation, but there is still too much judgement, risk, ambiguity, or exception handling for a fully autonomous workflow.`;
+    recommendation = `<b>Best next move</b>Automate preparation, retrieval, transformation, or drafting — then keep a human approval step before anything consequential happens. Think copilot, not autopilot.`;
+    warning = 'This is often the highest-value pattern: remove repetitive labour without automating the part where judgement actually matters.';
+  } else {
+    verdict = 'KEEP HUMAN';
+    cls = 'human';
+    explanation = `${task} currently looks like a poor candidate for full automation. The work is either too infrequent, too ambiguous, too risky, too exception-heavy, or too dependent on human judgement.`;
+    recommendation = `<b>Best next move</b>Improve the process before automating it. Standardise inputs, remove unnecessary variation, document recurring decisions, or use small templates/checklists instead of building a workflow.`;
+    warning = 'Automating a messy process usually creates a faster messy process.';
+  }
+
+  document.getElementById('score').textContent = score + '/100';
+  const v = document.getElementById('verdict');
+  v.textContent = verdict;
+  v.className = 'verdict ' + cls;
+
+  document.getElementById('rep').textContent = Math.round(repetition/16*100) + '%';
+  document.getElementById('rule').textContent = Math.round(rules/16*100) + '%';
+  document.getElementById('safe').textContent = Math.round(safety/16*100) + '%';
+  document.getElementById('humanFit').textContent = Math.round(human/16*100) + '%';
+
+  document.getElementById('explanation').textContent = explanation;
+  document.getElementById('recommendation').innerHTML = recommendation;
+  document.getElementById('warning').textContent = warning;
+}
+
+function loadExample(){
+  document.getElementById('task').value = 'Approve customer refunds where circumstances differ every time';
+  document.getElementById('frequency').value = '6';
+  document.getElementById('time').value = '2';
+  document.getElementById('clarity').value = '3';
+  document.getElementById('exceptions').value = '3';
+  document.getElementById('risk').value = '3';
+  document.getElementById('reversible').value = '5';
+  document.getElementById('data').value = '6';
+  document.getElementById('judgement').value = '0';
+  calculate();
+}
+
+calculate();
+</script>
+</body>
+</html>
