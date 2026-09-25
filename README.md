@@ -1,15 +1,11 @@
-# Office of Small Failures — preview build
+# Office of Small Failures — full static site
 
-Tiny products. Public tests. Useful mistakes.
+## Structure
 
-This static, browser-first build contains the homepage plus four working case files:
+- `/index.html` — studio homepage
+- `/worthdoing/index.html` — Case File 001: WorthDoing
+- `/should-i-automate-this/index.html` — Case File 002: Should I Automate This?
 
-- `/worthdoing/`
-- `/should-i-automate-this/`
-- `/ai-mute/`
-- `/signal-sample/` — current priority test
-- `/submit-a-problem/`
+Everything is static HTML/CSS/JavaScript. No API or backend is required.
 
-The existing experiment logic has been preserved. Signal Sample remains local/browser-first with manual observations, localStorage and CSV/JSON export. No paid LLM APIs, accounts, auth, database, backend or universal AI visibility score have been added.
-
-The legacy `/make-the-internet-shut-up-about-ai/` path redirects to `/ai-mute/`.
+Deploy the entire folder/ZIP to your static host so the nested routes are preserved.

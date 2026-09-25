@@ -1,31 +1,240 @@
 <!doctype html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NYF5KW1DQC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-NYF5KW1DQC');
+</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Office of Small Failures — Tiny Products. Public Tests. Useful Mistakes.</title>
-<meta name="description" content="Office of Small Failures is a tiny internet product studio. Small browser-first products, public tests and useful mistakes.">
+<title>Office of Small Failures — Free SEO, AI Visibility & Automation Tools</title>
+<meta name="description" content="Small, free browser-based experiments for SEO prioritisation, AI visibility tracking, automation decisions and digital problems.">
 <meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Office of Small Failures — Free SEO, Automation &amp; Digital Tools">
+<meta property="og:description" content="Small, free browser-based tools for SEO prioritisation, AI visibility tracking, automation decisions and digital problems. Built as public experiments by Office of Small Failures.">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Office of Small Failures", "description": "Small, free browser-based tools for SEO prioritisation, AI visibility tracking, automation decisions and digital problems."}</script>
+
 <style>
-:root{--ink:#11100d;--paper:#f2ead7;--red:#ff5a3d;--blue:#80d8ff;--yellow:#ffe96a;--green:#b8f28f;--pink:#ffb3d1;--violet:#9a87ff;--line:#161512;--white:#fff9ec}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:repeating-linear-gradient(0deg,rgba(17,16,13,.03) 0,rgba(17,16,13,.03) 1px,transparent 1px,transparent 4px),var(--paper);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:inherit}.page{max-width:1240px;margin:0 auto;padding:18px 18px 70px}.top{border:2px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:10px 12px;background:var(--white);box-shadow:4px 4px 0 var(--line)}.office{font-weight:950;letter-spacing:-.04em;text-transform:uppercase;font-size:14px}.nav{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-end}.nav a{font:800 9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;text-decoration:none;border-bottom:2px solid transparent}.nav a:hover{border-color:var(--line)}.hero{position:relative;padding:42px 0 28px}.stamp{display:inline-block;border:2px solid var(--line);background:var(--yellow);padding:7px 9px;font:900 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;transform:rotate(-2deg);margin-bottom:16px}h1{margin:0;font-size:clamp(70px,13vw,170px);line-height:.78;letter-spacing:-.095em;text-transform:uppercase;max-width:1160px}h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line);text-shadow:7px 7px 0 var(--red)}.hero-copy{max-width:720px;margin:32px 0 0 auto;font-size:clamp(20px,2.5vw,31px);line-height:1.2;font-weight:800;letter-spacing:-.035em}.hero-copy mark{background:var(--green);padding:0 .16em}.notice{position:absolute;right:1%;top:18%;width:190px;min-height:130px;background:#fffdf5;border:2px solid var(--line);box-shadow:7px 7px 0 var(--blue);transform:rotate(5deg);padding:14px;font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase}.notice b{display:block;font-size:13px;margin-bottom:8px}.ticker{margin:18px 0 42px;border-top:2px solid var(--line);border-bottom:2px solid var(--line);background:var(--line);color:#fff7e7;overflow:hidden;white-space:nowrap;transform:rotate(-.8deg) scale(1.02)}.ticker div{display:inline-block;padding:9px 0;font:900 10px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.1em;animation:ticker 26s linear infinite}.ticker span{margin-right:30px}.ticker i{font-style:normal;color:var(--yellow)}@keyframes ticker{to{transform:translateX(-35%)}}.section-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:2px solid var(--line);padding-bottom:8px;margin-bottom:14px}.section-head h2{margin:0;font-size:17px;text-transform:uppercase;letter-spacing:-.03em}.section-head small{font:9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em}.intro{max-width:820px;margin:0 0 28px;font-size:16px;line-height:1.6}.cards{display:grid;gap:16px}.card{display:grid;grid-template-columns:86px 1fr 150px;border:2px solid var(--line);background:#fffaf0;text-decoration:none;min-height:245px;transition:.15s transform,.15s box-shadow}.card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--line)}.index{border-right:2px solid var(--line);padding-top:18px;text-align:center;font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace}.card:nth-child(1) .index{background:var(--pink)}.card:nth-child(2) .index{background:var(--blue)}.card:nth-child(3) .index{background:var(--yellow)}.card:nth-child(4) .index{background:var(--green)}.main{position:relative;padding:24px 28px;overflow:hidden}.label{display:inline-block;border:2px solid var(--line);padding:6px 8px;font:900 9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;margin-bottom:18px}.card:nth-child(1) .label{background:var(--green)}.card:nth-child(2) .label{background:var(--yellow)}.card:nth-child(3) .label{background:var(--pink)}.card:nth-child(4) .label{background:var(--red)}.main h3{margin:0;font-size:clamp(46px,7vw,86px);line-height:.86;letter-spacing:-.08em;text-transform:uppercase}.main p{max-width:760px;margin:18px 0 0;font-size:16px;line-height:1.5}.open{border-left:2px solid var(--line);display:grid;place-items:center;font-size:58px}.card:nth-child(1) .open{background:var(--blue)}.card:nth-child(2) .open{background:var(--violet)}.card:nth-child(3) .open{background:var(--red)}.card:nth-child(4) .open{background:var(--yellow)}.priority{position:absolute;right:18px;top:18px;border:2px solid var(--line);background:var(--yellow);padding:6px 8px;font:900 9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;transform:rotate(2deg)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}.note-card{border:2px solid var(--line);padding:20px;min-height:180px}.note-card.red{background:var(--red)}.note-card.yellow{background:var(--yellow)}.note-card h4{margin:0 0 12px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em}.note-card p{margin:0;font-size:clamp(24px,3vw,38px);line-height:1.04;font-weight:900;letter-spacing:-.045em}.process{margin-top:34px;border:2px solid var(--line);background:#fffdf5;box-shadow:6px 6px 0 var(--blue);padding:22px}.process-grid{display:grid;grid-template-columns:repeat(7,auto);gap:8px;align-items:center;margin-top:16px}.step{border:2px solid var(--line);padding:12px 10px;text-align:center;font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--yellow)}.arrow{text-align:center;font-weight:950}.process p{max-width:760px;line-height:1.55;margin:14px 0 0}.submit{margin-top:34px;border:2px solid var(--line);background:var(--blue);padding:22px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end}.submit h2{font-size:clamp(38px,6vw,72px);line-height:.88;letter-spacing:-.065em;text-transform:uppercase;margin:0}.submit p{max-width:700px;line-height:1.5}.submit a{background:var(--ink);color:#fffdf5;text-decoration:none;border:2px solid var(--ink);padding:13px 16px;font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;box-shadow:5px 5px 0 var(--yellow)}.footer{margin-top:38px;padding-top:10px;border-top:2px solid var(--line);font:9px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.07em}@media(max-width:780px){.page{padding:12px 12px 48px}.top{grid-template-columns:1fr}.nav{justify-content:flex-start;gap:10px}.hero{padding-top:34px}h1{font-size:clamp(66px,21vw,110px)}h1 .outline{-webkit-text-stroke:2px var(--line);text-shadow:4px 4px 0 var(--red)}.hero-copy{margin:26px 0 0;font-size:19px}.notice{position:relative;right:auto;top:auto;width:170px;margin:26px 0 0 auto}.card{grid-template-columns:48px 1fr}.open{display:none}.index{font-size:9px}.main{padding:18px 18px 24px}.main h3{font-size:44px}.main p{font-size:14px}.priority{position:static;display:inline-block;margin-bottom:10px}.grid{grid-template-columns:1fr}.process-grid{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.submit{grid-template-columns:1fr;align-items:start}}
+:root{
+  --ink:#11100d;--paper:#f2ead7;--red:#ff5a3d;--blue:#80d8ff;--yellow:#ffe96a;
+  --green:#b8f28f;--pink:#ffb3d1;--violet:#9a87ff;--line:#161512;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;color:var(--ink);
+  background:
+    repeating-linear-gradient(0deg,rgba(17,16,13,.03) 0,rgba(17,16,13,.03) 1px,transparent 1px,transparent 4px),
+    var(--paper);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
+}
+a{color:inherit}
+.page{max-width:1240px;margin:0 auto;padding:18px 18px 70px}
+.top{
+  border:2px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:12px;
+  padding:10px 12px;background:#fff9ec;box-shadow:4px 4px 0 var(--line)
+}
+.office{font-weight:950;letter-spacing:-.04em;text-transform:uppercase;font-size:14px}
+.meta{font:10px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.09em}
+.hero{position:relative;padding:42px 0 28px}
+.stamp{
+  display:inline-block;border:2px solid var(--line);background:var(--yellow);padding:7px 9px;
+  font:900 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;
+  letter-spacing:.08em;transform:rotate(-2deg);margin-bottom:16px
+}
+h1{
+  margin:0;font-size:clamp(70px,13vw,170px);line-height:.78;letter-spacing:-.095em;
+  text-transform:uppercase;max-width:1160px
+}
+h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line);text-shadow:7px 7px 0 var(--red)}
+.hero-copy{
+  max-width:720px;margin:32px 0 0 auto;font-size:clamp(20px,2.5vw,31px);line-height:1.2;
+  font-weight:800;letter-spacing:-.035em
+}
+.hero-copy mark{background:var(--green);padding:0 .16em}
+.notice{
+  position:absolute;right:1%;top:18%;width:170px;min-height:130px;background:#fffdf5;
+  border:2px solid var(--line);box-shadow:7px 7px 0 var(--blue);transform:rotate(5deg);padding:14px;
+  font:10px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase
+}
+.notice b{display:block;font-size:13px;margin-bottom:8px}
+.ticker{
+  margin:18px 0 42px;border-top:2px solid var(--line);border-bottom:2px solid var(--line);
+  background:var(--line);color:#fff7e7;overflow:hidden;white-space:nowrap;transform:rotate(-.8deg) scale(1.02)
+}
+.ticker div{
+  display:inline-block;padding:9px 0;font:900 10px ui-monospace,SFMono-Regular,Menlo,monospace;
+  text-transform:uppercase;letter-spacing:.1em
+}
+.ticker span{margin-right:30px}.ticker i{font-style:normal;color:var(--yellow)}
+.section-head{
+  display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:2px solid var(--line);
+  padding-bottom:8px;margin-bottom:14px
+}
+.section-head h2{margin:0;font-size:17px;text-transform:uppercase;letter-spacing:-.03em}
+.section-head small{font:9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em}
+.cards{display:grid;gap:16px}
+.card{
+  display:grid;grid-template-columns:86px 1fr 150px;border:2px solid var(--line);background:#fffaf0;
+  text-decoration:none;min-height:250px;transition:.15s transform,.15s box-shadow
+}
+.card:hover{transform:translate(-4px,-4px);box-shadow:8px 8px 0 var(--line)}
+.index{
+  border-right:2px solid var(--line);padding-top:18px;text-align:center;
+  font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace
+}
+.card:nth-child(1) .index{background:var(--pink)}
+.card:nth-child(2) .index{background:var(--blue)}
+.main{position:relative;padding:24px 28px;overflow:hidden}
+.label{
+  display:inline-block;border:2px solid var(--line);padding:6px 8px;
+  font:900 9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:18px
+}
+.card:nth-child(1) .label{background:var(--green)}
+.card:nth-child(2) .label{background:var(--yellow)}
+.main h3{margin:0;font-size:clamp(48px,7.5vw,90px);line-height:.86;letter-spacing:-.08em;text-transform:uppercase}
+.main p{max-width:710px;margin:18px 0 0;font-size:16px;line-height:1.5}
+.open{border-left:2px solid var(--line);display:grid;place-items:center;font-size:58px}
+.card:nth-child(1) .open{background:var(--blue)}
+.card:nth-child(2) .open{background:var(--violet)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+.note-card{border:2px solid var(--line);padding:20px;min-height:180px}
+.note-card.red{background:var(--red)}.note-card.yellow{background:var(--yellow)}
+.note-card h4{
+  margin:0 0 12px;font:10px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em
+}
+.note-card p{margin:0;font-size:clamp(24px,3vw,38px);line-height:1.04;font-weight:900;letter-spacing:-.045em}
+.footer{
+  margin-top:38px;padding-top:10px;border-top:2px solid var(--line);
+  font:9px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.07em
+}
+@media(max-width:780px){
+  .page{padding:12px 12px 48px}.hero{padding-top:34px}
+  h1{font-size:clamp(66px,21vw,110px)}
+  h1 .outline{-webkit-text-stroke:2px var(--line);text-shadow:4px 4px 0 var(--red)}
+  .hero-copy{margin:26px 0 0;font-size:19px}
+  .notice{position:relative;right:auto;top:auto;width:150px;margin:26px 0 0 auto}
+  .card{grid-template-columns:48px 1fr}.open{display:none}.index{font-size:9px}
+  .main{padding:18px 18px 24px}.main h3{font-size:46px}.main p{font-size:14px}
+  .grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <div class="page">
-<header class="top"><div class="office">Office of Small Failures</div><nav class="nav" aria-label="Main navigation"><a href="/">Office of Small Failures</a><a href="#case-files">Case files</a><a href="/submit-a-problem/">Submit a problem</a></nav></header>
-<main>
-<section class="hero"><div class="stamp">Unofficial department for trying things</div><h1>Office of <span class="outline">Small Failures</span></h1><p class="hero-copy">Tiny products. Public tests. Useful mistakes. <mark>Nothing gets promoted just because somebody built it.</mark></p><aside class="notice"><b>Internal memo</b>Build the smallest thing that can still prove you wrong.</aside></section>
-<div class="ticker" aria-hidden="true"><div><span>BUILD <i>✶</i></span><span>TEST <i>✶</i></span><span>DISAPPOINT <i>✶</i></span><span>LEARN <i>✶</i></span><span>REPAIR <i>✶</i></span><span>KILL <i>✶</i></span><span>KEEP <i>✶</i></span><span>BUILD <i>✶</i></span><span>TEST <i>✶</i></span><span>DISAPPOINT <i>✶</i></span><span>LEARN <i>✶</i></span><span>REPAIR <i>✶</i></span><span>KILL <i>✶</i></span><span>KEEP <i>✶</i></span></div></div>
-<section id="case-files"><p class="intro"><strong>Office of Small Failures</strong> is a tiny internet product studio. Small things get built, exposed to actual use, reviewed, and either kept, repaired or killed. The files below are the experiments currently allowed to exist.</p><div class="section-head"><h2>Open case files</h2><small>Four experiments / one current priority</small></div><div class="cards">
-<a class="card" href="/worthdoing/"><div class="index">001</div><div class="main"><div class="label">Under investigation</div><h3>WorthDoing</h3><p>A small SEO decision machine. Put in a task, likely upside, effort and uncertainty. Get back a commercial case and a verdict on whether it deserves to survive the backlog.</p></div><div class="open">↗</div></a>
-<a class="card" href="/should-i-automate-this/"><div class="index">002</div><div class="main"><div class="label">Under investigation</div><h3>Should I Automate This?</h3><p>A small decision tool for recurring work. Work out whether something deserves automation, AI assistance, ordinary software or a human being.</p></div><div class="open">↗</div></a>
-<a class="card" href="/ai-mute/"><div class="index">003</div><div class="main"><div class="label">Experiment</div><h3>AI Mute</h3><p>An experiment in reducing AI-content fatigue by hiding the stuff you no longer want to hear about.</p></div><div class="open">↗</div></a>
-<a class="card" href="/signal-sample/"><div class="index">004</div><div class="main"><span class="priority">Current priority</span><div class="label">Priority test</div><h3>Signal Sample</h3><p>A deliberately sampled way to measure visibility across AI-search surfaces without pretending there is a universal AI ranking. Sampled evidence, not a ranking.</p></div><div class="open">↗</div></a>
-</div></section>
-<section class="grid"><div class="note-card red"><h4>Office policy</h4><p>Failure is cheaper when the thing is still tiny.</p></div><div class="note-card yellow"><h4>Promotion criteria</h4><p>Useful things get another week. Everything else gets paperwork.</p></div></section>
-<section class="process"><div class="section-head"><h2>How a case file survives</h2><small>Very small methodology department</small></div><div class="process-grid" aria-label="Build, test, review, keep repair or kill"><div class="step">BUILD</div><div class="arrow">→</div><div class="step">TEST</div><div class="arrow">→</div><div class="step">REVIEW</div><div class="arrow">→</div><div class="step">KEEP / REPAIR / KILL</div></div><p>Build enough to test the idea. Put it in front of real use. Review the evidence. Give useful things more time; repair specific problems; close the rest before they become infrastructure.</p></section>
-<section class="submit"><div><h2>Submit a problem</h2><p>Got a specific digital or work annoyance that deserves a tiny experiment? Send it to the Office intake desk. Specific irritating problems are much more useful than startup ideas.</p></div><a href="/submit-a-problem/">Open intake form →</a></section>
-<div class="footer">Office of Small Failures is a tiny product studio by James Yorke.<br>More case files appear only when something has actually been built.</div>
-</main></div>
-</body></html>
+  <header class="top">
+    <div class="office">Office of Small Failures</div>
+    <div class="meta">James Yorke / Internet product studio / 2 case files open</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="stamp">Unofficial department for trying things</div>
+      <h1>Office of <span class="outline">Small Failures</span></h1>
+
+      <p class="hero-copy">
+        Tiny products. Public tests. Useful mistakes.
+        <mark>Nothing gets promoted just because somebody built it.</mark>
+      </p>
+
+      <aside class="notice">
+        <b>Internal memo</b>
+        Build the smallest thing that can still prove you wrong.
+      </aside>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div>
+        <span>BUILD <i>✶</i></span><span>TEST <i>✶</i></span><span>DISAPPOINT <i>✶</i></span>
+        <span>LEARN <i>✶</i></span><span>REPAIR <i>✶</i></span><span>KILL <i>✶</i></span>
+        <span>KEEP <i>✶</i></span><span>BUILD <i>✶</i></span>
+      </div>
+    </div>
+
+    <section>
+      <div class="seo-intro" style="max-width:820px;margin:0 0 28px;font-size:16px;line-height:1.6">
+      <p><strong>Office of Small Failures</strong> is a collection of small, free digital tools built to answer practical questions: which SEO task is worth doing, which work should be automated, and how to filter out AI noise. Each tool runs as a lightweight public experiment.</p>
+    </div>
+    <div class="section-head">
+        <h2>Open case files</h2>
+        <small>things currently being allowed to exist</small>
+      </div>
+
+      <div class="cards">
+        <a class="card" href="/worthdoing/">
+          <div class="index">001</div>
+          <div class="main">
+            <div class="label">Under investigation</div>
+            <h3>WorthDoing</h3>
+            <p>
+              A small SEO decision machine. Put in a task, likely upside, effort and uncertainty.
+              Get back a commercial case and a verdict on whether it deserves to survive the backlog.
+            </p>
+          </div>
+          <div class="open">↗</div>
+        </a>
+
+        <a class="card" href="/should-i-automate-this/">
+          <div class="index">002</div>
+          <div class="main">
+            <div class="label">Automation triage</div>
+            <h3>Should I Automate This?</h3>
+            <p>
+              Describe a recurring task. The machine scores repetition, rules, exceptions, risk,
+              reversibility and human judgement — then tells you to automate it, assist it, or leave it alone.
+            </p>
+          </div>
+          <div class="open">↗</div>
+        </a>
+      </div>
+    
+      <a class="card" href="/make-the-internet-shut-up-about-ai/" style="margin-top:14px">
+        <div class="index">003</div>
+        <div class="main">
+          <div class="label">Under investigation</div>
+          <h3>AI Mute</h3>
+          <p>
+            A free AI content filter experiment. Paste posts, articles or newsletters and collapse the sections dominated by AI talk, AI hype and common AI buzzwords.
+          </p>
+        </div>
+        <div class="open">↗</div>
+      </a>
+
+      <a class="card" href="/signal-sample/" style="margin-top:14px">
+        <div class="index">004</div>
+        <div class="main">
+          <div class="label">Under investigation</div>
+          <h3>Signal Sample</h3>
+          <p>
+            A browser-based AI visibility tracking experiment. Build a fixed question panel, record ChatGPT, Gemini, Perplexity and other AI-search observations, then measure sampled brand presence, citations, competitors and accuracy.
+          </p>
+        </div>
+        <div class="open">↗</div>
+      </a>
+</section>
+
+    <section class="grid">
+      <div class="note-card red">
+        <h4>Office policy</h4>
+        <p>Failure is cheaper when the thing is still tiny.</p>
+      </div>
+      <div class="note-card yellow">
+        <h4>Promotion criteria</h4>
+        <p>Useful things get another week. Everything else gets paperwork.</p>
+      </div>
+    </section>
+
+    <div class="footer">
+      Office of Small Failures is a side project by James Yorke: free SEO, AI visibility, automation and digital tools tested in public. More case files appear only when something has actually been built.
+    </div>
+  </main>
+</div>
+</body>
+</html>
