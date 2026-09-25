@@ -89,21 +89,30 @@ h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line)
   border-right:2px solid var(--line);padding-top:18px;text-align:center;
   font:900 11px ui-monospace,SFMono-Regular,Menlo,monospace
 }
-.card:nth-child(1) .index{background:var(--pink)}
-.card:nth-child(2) .index{background:var(--blue)}
+.tool-001 .index{background:var(--red)}
+.tool-002 .index{background:var(--yellow)}
+.tool-003 .index{background:var(--blue)}
+.tool-004 .index{background:var(--green)}
+.tool-005 .index{background:var(--violet)}
 .main{position:relative;padding:24px 28px;overflow:hidden}
 .label{
   display:inline-block;border:2px solid var(--line);padding:6px 8px;
   font:900 9px ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;
   letter-spacing:.08em;margin-bottom:18px
 }
-.card:nth-child(1) .label{background:var(--green)}
-.card:nth-child(2) .label{background:var(--yellow)}
+.tool-001 .label{background:var(--red)}
+.tool-002 .label{background:var(--yellow)}
+.tool-003 .label{background:var(--blue)}
+.tool-004 .label{background:var(--green)}
+.tool-005 .label{background:var(--violet)}
 .main h3{margin:0;font-size:clamp(48px,7.5vw,90px);line-height:.86;letter-spacing:-.08em;text-transform:uppercase}
 .main p{max-width:710px;margin:18px 0 0;font-size:16px;line-height:1.5}
 .open{border-left:2px solid var(--line);display:grid;place-items:center;font-size:58px}
-.card:nth-child(1) .open{background:var(--blue)}
-.card:nth-child(2) .open{background:var(--violet)}
+.tool-001 .open{background:var(--red)}
+.tool-002 .open{background:var(--yellow)}
+.tool-003 .open{background:var(--blue)}
+.tool-004 .open{background:var(--green)}
+.tool-005 .open{background:var(--violet)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
 .note-card{border:2px solid var(--line);padding:20px;min-height:180px}
 .note-card.red{background:var(--red)}.note-card.yellow{background:var(--yellow)}
@@ -131,7 +140,7 @@ h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line)
 <div class="page">
   <header class="top">
     <div class="office">Office of Small Failures</div>
-    <div class="meta">James Yorke / Internet product studio / 2 case files open</div>
+    <div class="meta">James Yorke / Internet product studio / 5 case files open</div>
   </header>
 
   <main>
@@ -168,7 +177,7 @@ h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line)
       </div>
 
       <div class="cards">
-        <a class="card" href="/worthdoing/">
+        <a class="card tool-001" href="/worthdoing/">
           <div class="index">001</div>
           <div class="main">
             <div class="label">Under investigation</div>
@@ -181,7 +190,7 @@ h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line)
           <div class="open">↗</div>
         </a>
 
-        <a class="card" href="/should-i-automate-this/">
+        <a class="card tool-002" href="/should-i-automate-this/">
           <div class="index">002</div>
           <div class="main">
             <div class="label">Automation triage</div>
@@ -195,7 +204,7 @@ h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line)
         </a>
       </div>
     
-      <a class="card" href="/make-the-internet-shut-up-about-ai/" style="margin-top:14px">
+      <a class="card tool-003" href="/make-the-internet-shut-up-about-ai/" style="margin-top:14px">
         <div class="index">003</div>
         <div class="main">
           <div class="label">Under investigation</div>
@@ -207,13 +216,25 @@ h1 .outline{display:block;color:var(--paper);-webkit-text-stroke:3px var(--line)
         <div class="open">↗</div>
       </a>
 
-      <a class="card" href="/signal-sample/" style="margin-top:14px">
+      <a class="card tool-004" href="/signal-sample/" style="margin-top:14px">
         <div class="index">004</div>
         <div class="main">
           <div class="label">Under investigation</div>
           <h3>Signal Sample</h3>
           <p>
             A browser-based AI visibility tracking experiment. Build a fixed question panel, record ChatGPT, Gemini, Perplexity and other AI-search observations, then measure sampled brand presence, citations, competitors and accuracy.
+          </p>
+        </div>
+        <div class="open">↗</div>
+      </a>
+
+      <a class="card tool-005" href="/backlog-court/" style="margin-top:14px">
+        <div class="index">005</div>
+        <div class="main">
+          <div class="label">Under investigation</div>
+          <h3>Backlog Court</h3>
+          <p>
+            Put competing SEO and digital tasks on trial. Compare commercial impact, evidence, urgency, strategic fit, effort and delivery dependencies — then rank what deserves the next slot.
           </p>
         </div>
         <div class="open">↗</div>
