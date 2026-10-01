@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Data Interpretation Tool | Dashboard Lie Detector</title>
+<meta name="description" content="Free dashboard data interpretation tool. Check whether a chart or KPI actually supports the conclusion being made, identify missing context and rewrite the claim more carefully.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://officeofsmallfailures.com/dashboard-lie-detector/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/osf.css">
+<meta property="og:title" content="Dashboard Lie Detector — Does the Chart Support the Claim?">
+<meta property="og:description" content="Put a dashboard claim on trial. Check comparison, tracking, denominator, segmentation, context and causality before repeating it.">
+<meta property="og:url" content="https://officeofsmallfailures.com/dashboard-lie-detector/">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NYF5KW1DQC"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments)}
+gtag('js',new Date());
+gtag('config','G-NYF5KW1DQC');
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {
+      "@type":"SoftwareApplication",
+      "name":"Dashboard Lie Detector",
+      "url":"https://officeofsmallfailures.com/dashboard-lie-detector/",
+      "applicationCategory":"BusinessApplication",
+      "operatingSystem":"Web browser",
+      "description":"A free browser-based data interpretation tool for checking whether a dashboard metric supports the conclusion being made.",
+      "isAccessibleForFree":true,
+      "offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}
+    },
+    {
+      "@type":"FAQPage",
+      "mainEntity":[
+        {"@type":"Question","name":"What is Dashboard Lie Detector?","acceptedAnswer":{"@type":"Answer","text":"It is a data interpretation checklist that tests whether a dashboard claim has enough context behind it. It does not independently verify the underlying data."}},
+        {"@type":"Question","name":"Does it detect fake data or lies?","acceptedAnswer":{"@type":"Answer","text":"No. The name is deliberately playful. The tool checks the strength of the reasoning around a metric, not whether a person is lying or whether the source data is genuine."}},
+        {"@type":"Question","name":"What does the tool check?","acceptedAnswer":{"@type":"Answer","text":"It checks the comparison, time period, measurement definition, denominator or sample, segmentation, external context and whether causal language is stronger than the evidence."}},
+        {"@type":"Question","name":"Can a dashboard prove what caused a change?","acceptedAnswer":{"@type":"Answer","text":"Usually not by itself. A dashboard can show that metrics changed together, but causal conclusions normally need stronger evidence such as a controlled test or a well-supported causal design."}},
+        {"@type":"Question","name":"Does my dashboard data leave the browser?","acceptedAnswer":{"@type":"Answer","text":"The assessment runs in the browser. Free-text claim and metric fields are not sent as analytics event parameters."}}
+      ]
+    }
+  ]
+}
+</script>
+<style>
+:root{--accent:#ffad66;--accent2:#ffe260}
+.check{border:2px solid var(--line);background:#fff;padding:12px;margin:10px 0}
+.check label{font-size:11px;line-height:1.4}
+.issue{border:2px solid var(--line);background:#fff;padding:10px;margin:8px 0}
+.issue.high{border-left:10px solid #ff6b5c}
+.issue.mid{border-left:10px solid #ffe260}
+.issue.ok{border-left:10px solid #9de7a0}
+.verdict{display:inline-block;border:2px solid var(--line);padding:7px 9px;background:var(--accent);font-weight:900;text-transform:uppercase;margin:8px 0}
+.sharebox{border:2px solid var(--line);background:var(--accent2);padding:14px;margin-top:14px}
+.sharebox b{display:block;text-transform:uppercase;margin-bottom:5px}
+</style>
+</head>
+<body data-tool="dashboard_lie_detector">
+<div class="page">
+<header class="top"><a href="/">Office of Small Failures / Case File 007</a><span class="status">Claim under review</span></header>
+
+<section class="hero">
+  <div>
+    <span class="kicker">Dashboard reasoning experiment</span>
+    <h1>Dashboard Lie Detector</h1>
+    <p class="lede">Does the chart actually support the sentence people are saying about it? Put the claim on trial before it reaches the next deck.</p>
+  </div>
+  <aside class="memo">The dashboard is not the truth. It is a witness statement.</aside>
+</section>
+
+<div class="rule">This tool does not detect fake data or accuse anyone of lying. It checks whether the reasoning around a dashboard metric is stronger than the evidence you have entered.</div>
+
+<div class="layout">
+<section class="panel">
+  <div class="head"><h2>Enter the dashboard claim</h2></div>
+  <div class="body">
+    <div class="field"><label>Metric</label><input id="metric" placeholder="e.g. Organic conversion rate"></div>
+    <div class="field"><label>Claim being made</label><textarea id="claim" placeholder="e.g. The landing-page redesign increased conversion rate."></textarea></div>
+    <div class="grid2">
+      <div class="field"><label>Current value</label><input id="current" type="number" step="any" placeholder="3.8"></div>
+      <div class="field"><label>Comparison value</label><input id="previous" type="number" step="any" placeholder="3.2"></div>
+      <div class="field"><label>Comparison</label><select id="comparison">
+        <option value="0">No clear comparison</option>
+        <option value="1">Previous period</option>
+        <option value="2">Year on year / matched period</option>
+        <option value="2">Control / holdout / experiment</option>
+        <option value="1">Target / benchmark</option>
+      </select></div>
+      <div class="field"><label>Claim type</label><select id="claimType">
+        <option value="descriptive">Descriptive — “X changed”</option>
+        <option value="suggestive">Suggestive — “X may be linked to Y”</option>
+        <option value="causal">Causal — “Y caused X”</option>
+      </select></div>
+    </div>
+
+    <div class="check"><label>Are the compared time periods genuinely comparable?</label>
+      <select id="period"><option value="0">No / not sure</option><option value="1">Mostly</option><option value="2">Yes</option></select>
+    </div>
+    <div class="check"><label>Was the metric definition / tracking method unchanged?</label>
+      <select id="tracking"><option value="0">No / not sure</option><option value="1">Mostly</option><option value="2">Yes</option></select>
+    </div>
+    <div class="check"><label>Is the denominator or sample large and stable enough to interpret?</label>
+      <select id="sample"><option value="0">No / not sure</option><option value="1">Probably</option><option value="2">Yes</option></select>
+    </div>
+    <div class="check"><label>Have you checked whether the headline result changes by segment?</label>
+      <select id="segment"><option value="0">No</option><option value="1">Partly</option><option value="2">Yes</option></select>
+    </div>
+    <div class="check"><label>Have seasonality, campaigns, outages or other external changes been considered?</label>
+      <select id="context"><option value="0">No</option><option value="1">Some</option><option value="2">Yes</option></select>
+    </div>
+    <div class="check"><label>If the claim is causal, is there evidence designed to support causality?</label>
+      <select id="causalEvidence"><option value="0">No / not sure</option><option value="1">Some supporting evidence</option><option value="2">Controlled test or strong causal design</option></select>
+    </div>
+
+    <button class="btn primary" onclick="judge()">Put the claim on trial</button>
+  </div>
+</section>
+
+<aside class="panel">
+  <div class="head"><h2>Verdict</h2></div>
+  <div class="body">
+    <div class="score" id="score">—/100</div>
+    <div class="verdict" id="verdict">Awaiting evidence</div>
+    <div class="help">Reasoning support score. Not a truth score.</div>
+    <div class="grid3" style="margin-top:14px">
+      <div class="metric"><span>Change</span><b id="change">—</b></div>
+      <div class="metric"><span>Issues</span><b id="issueCount">0</b></div>
+      <div class="metric"><span>Claim type</span><b id="typeOut">—</b></div>
+    </div>
+    <div id="issues" style="margin-top:12px"></div>
+    <div class="result" id="rewrite">Run the check to get a safer stakeholder rewrite.</div>
+    <div class="sharebox">
+      <b>Issue a dashboard receipt</b>
+      <p id="shareLine">Check the claim first.</p>
+      <button class="btn dark" onclick="shareCurrent()">Share receipt</button>
+      <button class="btn" onclick="copyRewrite()">Copy safer wording</button>
+    </div>
+  </div>
+</aside>
+</div>
+
+<section class="seo">
+<h2>How to check whether a dashboard supports a claim</h2>
+<p>Dashboard Lie Detector is a free data interpretation tool for checking whether a KPI, chart or reporting dashboard has enough context behind the conclusion being made. It does not verify the source data. It tests the reasoning around it.</p>
+
+<h3>Start with the comparison, not the story</h3>
+<p>A metric moving up or down only becomes interpretable when the comparison is clear. Previous-period comparisons can be distorted by seasonality. Targets and benchmarks answer a different question from matched-period or controlled comparisons.</p>
+
+<h3>Check definitions, denominators and segments</h3>
+<p>A headline KPI can change because tracking changed, the underlying sample changed, or one segment moved while another did not. Before turning movement into a narrative, check whether the measurement itself remained comparable.</p>
+
+<h3>Correlation is not the same as causation</h3>
+<p>A dashboard may show that a metric changed after a campaign, redesign or SEO release. That sequence alone does not prove the intervention caused the movement. Strong causal language needs stronger evidence.</p>
+
+<h3>Use the rewrite as a stakeholder-safe version</h3>
+<p>The tool creates a more careful sentence based on the information entered. It is designed to help teams separate what the data shows from what they suspect may explain it.</p>
+
+<div class="faq">
+<h2>Dashboard data interpretation FAQs</h2>
+<details><summary>What is Dashboard Lie Detector?</summary><p>It is a checklist for testing whether a dashboard claim has enough context behind it.</p></details>
+<details><summary>Does it detect fake data or lies?</summary><p>No. The name is playful. It checks reasoning, not honesty or data authenticity.</p></details>
+<details><summary>What does the tool check?</summary><p>Comparison, time periods, tracking definitions, denominator or sample stability, segmentation, external context and causal language.</p></details>
+<details><summary>Can a dashboard prove what caused a change?</summary><p>Usually not by itself. Causal claims generally need stronger evidence than a before-and-after dashboard.</p></details>
+<details><summary>Does my free-text data leave the browser?</summary><p>The assessment runs in the browser, and the claim/metric text is not sent as an analytics parameter.</p></details>
+</div>
+</section>
+
+<footer class="footer">Office of Small Failures / Dashboard Lie Detector / Data interpretation tool / Browser-only / <a href="/contact/">Contact</a></footer>
+</div>
+
+<script>
+let lastResult=null;
+let started=false;
+function track(name,params){
+  if(typeof gtag==='function') gtag('event',name,Object.assign({tool_name:'dashboard_lie_detector'},params||{}));
+}
+function markStart(){
+  if(started)return;
+  started=true;
+  track('tool_start');
+}
+document.addEventListener('input',e=>{if(e.target.matches('input,select,textarea'))markStart()},{passive:true});
+document.addEventListener('change',e=>{if(e.target.matches('input,select,textarea'))markStart()},{passive:true});
+
+function n(id){return Number(document.getElementById(id).value)||0}
+function pctChange(a,b){
+  if(!Number.isFinite(a)||!Number.isFinite(b)||b===0)return null;
+  return ((a-b)/Math.abs(b))*100;
+}
+function esc(s){return String(s||'').replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+
+function judge(){
+  markStart();
+  const cType=claimType.value;
+  const checks={
+    comparison:n('comparison'),
+    period:n('period'),
+    tracking:n('tracking'),
+    sample:n('sample'),
+    segment:n('segment'),
+    context:n('context'),
+    causalEvidence:n('causalEvidence')
+  };
+
+  let raw=checks.comparison+checks.period+checks.tracking+checks.sample+checks.segment+checks.context;
+  let max=12;
+  if(cType==='causal'){raw+=checks.causalEvidence;max+=2}
+  else if(cType==='suggestive'){raw+=Math.min(checks.causalEvidence,1);max+=1}
+
+  let support=Math.round((raw/max)*100);
+  if(cType==='causal' && checks.causalEvidence===0) support=Math.min(support,45);
+  if(cType==='causal' && checks.causalEvidence===1) support=Math.min(support,70);
+
+  const issuesList=[];
+  if(checks.comparison===0)issuesList.push(['high','No clear comparison','A change needs a defined reference point before the story is interpretable.']);
+  if(checks.period===0)issuesList.push(['high','Time periods may not be comparable','Seasonality or different period length can create a convincing-looking change.']);
+  if(checks.tracking===0)issuesList.push(['high','Measurement may have changed','A tracking or metric-definition change can look like performance movement.']);
+  if(checks.sample===0)issuesList.push(['mid','Sample / denominator is uncertain','A rate can move because the mix or denominator changed, not because behaviour changed.']);
+  if(checks.segment===0)issuesList.push(['mid','No segmentation check','A headline average can hide opposing movements underneath.']);
+  if(checks.context===0)issuesList.push(['mid','External context is missing','Campaigns, outages, pricing, seasonality or other changes may explain part of the movement.']);
+  if(cType==='causal' && checks.causalEvidence<2)issuesList.push(['high','Causal language is stronger than the evidence','Before-and-after movement alone does not establish that the intervention caused the change.']);
+  if(cType==='suggestive' && checks.causalEvidence===0)issuesList.push(['mid','Link is plausible but untested','Use tentative language and name the relationship as a hypothesis.']);
+
+  let label, diagnosis;
+  if(support>=80){label='SUPPORTED ENOUGH TO SAY';diagnosis='The reasoning has most of the context needed for a careful claim.'}
+  else if(support>=60){label='NEEDS CONTEXT';diagnosis='The direction may be real, but at least one missing check weakens the story.'}
+  else if(support>=40){label='CLAIM TOO STRONG';diagnosis='The sentence is doing more work than the dashboard can currently support.'}
+  else{label='DASHBOARD INCIDENT';diagnosis='There is a number. There is not yet enough evidence for the story attached to it.'}
+
+  const cur=Number(current.value), prev=Number(previous.value);
+  const delta=pctChange(cur,prev);
+  change.textContent=(current.value!==''&&previous.value!==''&&delta!==null)?((delta>=0?'+':'')+delta.toFixed(1)+'%'):'—';
+  score.textContent=support+'/100';
+  verdict.textContent=label;
+  issueCount.textContent=issuesList.length;
+  typeOut.textContent=cType==='causal'?'Causal':cType==='suggestive'?'Suggestive':'Descriptive';
+
+  issues.innerHTML=issuesList.length
+    ? issuesList.map(x=>`<div class="issue ${x[0]}"><b>${esc(x[1])}</b><br><span class="help">${esc(x[2])}</span></div>`).join('')
+    : '<div class="issue ok"><b>No major reasoning gaps selected</b><br><span class="help">That still does not independently verify the source data.</span></div>';
+
+  const metricName=metric.value.trim()||'The metric';
+  let safe='';
+  if(current.value!==''&&previous.value!==''){
+    const changePhrase=delta===null?'changed':`${delta>=0?'increased':'decreased'} by ${Math.abs(delta).toFixed(1)}%`;
+    if(cType==='causal' && checks.causalEvidence<2){
+      safe=`${metricName} ${changePhrase}, from ${previous.value} to ${current.value}. This happened alongside the change described in the original claim, but the dashboard evidence entered here does not establish causation.`;
+    } else if(cType==='suggestive'){
+      safe=`${metricName} ${changePhrase}, from ${previous.value} to ${current.value}. The change may be related to the factor in the original claim, but other explanations should still be considered.`;
+    } else {
+      safe=`${metricName} ${changePhrase}, from ${previous.value} to ${current.value}. Based on the checks entered, this is a descriptive result; interpretation still depends on the comparison and measurement context.`;
+    }
+  } else {
+    safe=`${metricName} changed in the direction described. Add the underlying values before using a more precise claim. ${cType==='causal'?'The information entered does not yet justify causal language.':'Keep the conclusion descriptive until the missing context is checked.'}`;
+  }
+
+  rewrite.textContent=`${diagnosis}\n\nSafer wording:\n${safe}`;
+  shareLine.textContent=`DASHBOARD RECEIPT: ${label} · ${support}/100 reasoning support · ${issuesList.length} issue${issuesList.length===1?'':'s'} flagged.`;
+
+  lastResult={label,support,issues:issuesList.length,safe};
+  track('tool_complete',{result_band:label,result_score:support,issue_count:issuesList.length,claim_type:cType});
+}
+
+async function shareCurrent(){
+  if(!lastResult)return alert('Put the claim on trial first.');
+  const text=`${shareLine.textContent}\n\n${lastResult.safe}\n\nMade with Office of Small Failures.`;
+  track('tool_share',{share_method:navigator.share?'native':'clipboard'});
+  if(navigator.share){
+    try{await navigator.share({title:'Dashboard Lie Detector receipt',text,url:location.href});return}catch(e){}
+  }
+  try{await navigator.clipboard.writeText(text+'\n'+location.href);alert('Receipt copied. Paste it into LinkedIn, Slack or Teams.')}
+  catch(e){prompt('Copy this result:',text+'\n'+location.href)}
+}
+function copyRewrite(){
+  if(!lastResult)return alert('Put the claim on trial first.');
+  track('tool_copy');
+  navigator.clipboard?.writeText(lastResult.safe).then(()=>alert('Safer wording copied.')).catch(()=>prompt('Copy this:',lastResult.safe));
+}
+</script>
+</body>
+</html>
