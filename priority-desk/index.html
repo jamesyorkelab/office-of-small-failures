@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Priority Desk — Jira Ticket Value & Sprint Prioritisation Tool</title>
+<meta name="description" content="Scope a Jira ticket, calculate a defensible conditional value or break-even hurdle, challenge assumptions, compare feasible sprint work and preserve the decision for later review.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://officeofsmallfailures.com/priority-desk/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/osf.css">
+<meta property="og:title" content="The Priority Desk — What is this ticket worth, and should we do it?">
+<meta property="og:description" content="A practical browser tool for commercial Jira ticket valuation and sprint decisions.">
+<meta property="og:url" content="https://officeofsmallfailures.com/priority-desk/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"SoftwareApplication","name":"The Priority Desk","url":"https://officeofsmallfailures.com/priority-desk/","applicationCategory":"BusinessApplication","operatingSystem":"Web browser","isAccessibleForFree":true,"description":"A browser-based decision tool for scoping business and SEO tickets, calculating conditional commercial value or break-even hurdles, comparing feasible sprint work and reviewing decisions.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}},
+{"@type":"WebPage","name":"The Priority Desk","url":"https://officeofsmallfailures.com/priority-desk/","description":"Commercial Jira ticket valuation and sprint prioritisation tool from Office of Small Failures."}
+]}</script>
+<style>
+:root{--accent:#55c9be;--accent2:#ffe260;--danger:#ff6b5c;--good:#9de7a0;--blue:#83d5ff}
+.mode-grid,.choice-grid,.rec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mode,.choice,.rec{border:2px solid var(--line);background:#fff;padding:14px;text-align:left;cursor:pointer;font-weight:900;min-height:92px}
+.mode:hover,.choice:hover,.rec:hover,.choice.selected,.mode.selected,.rec.selected{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--line)}
+.choice.selected,.mode.selected,.rec.selected{background:var(--accent2)}
+.mode strong,.choice strong{display:block;font-size:17px;margin-bottom:5px}.mode small,.choice small{display:block;font-weight:400;line-height:1.4}
+.app-section{display:none}.app-section.active{display:block}
+.deskbar{position:sticky;top:0;z-index:5;background:var(--paper);padding:8px 0 10px;border-bottom:2px solid var(--line);margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap}
+.pill{border:2px solid var(--line);background:#fff;padding:7px 9px;font-size:10px;font-weight:900;text-transform:uppercase;cursor:pointer}.pill.active{background:var(--accent)}
+.stepcard{border:2px solid var(--line);background:var(--panel);box-shadow:5px 5px 0 var(--line);margin-bottom:16px}
+.stephead{padding:10px 12px;border-bottom:2px solid var(--line);background:#e9e0cf;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.stephead h2{font-size:15px;margin:0;text-transform:uppercase}.stepbody{padding:14px}
+.scope-preview{border:2px solid var(--line);background:var(--blue);padding:10px;font-weight:800;line-height:1.5}
+.notice{border:2px solid var(--line);padding:10px;background:#fff;margin:10px 0}.notice.warn{background:var(--accent2)}.notice.bad{background:#ffd5cf}.notice.good{background:#dff5dd}
+.bigresult{font-family:Arial Black,Impact,sans-serif;font-size:clamp(44px,7vw,78px);line-height:.9;letter-spacing:-.04em}
+.resultgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.resultgrid .metric b{font-size:18px}
+.calcchain{border:2px solid var(--line);background:#fff;padding:12px;line-height:1.6;margin-top:10px;font-size:11px}
+.state{display:inline-block;border:2px solid var(--line);padding:6px 8px;background:var(--accent2);font-weight:900;text-transform:uppercase}
+.ticket-board{display:grid;gap:10px}.ticket-row{border:2px solid var(--line);background:#fff;padding:12px;display:grid;grid-template-columns:36px 1.5fr repeat(4,1fr);gap:8px;align-items:center}
+.ticket-row.head{background:#e9e0cf;font-size:9px;text-transform:uppercase;font-weight:900}
+.demo-card{border:2px solid var(--line);background:#fff;padding:12px;margin:8px 0}.demo-card h3{margin:0 0 6px}.hidden{display:none!important}
+.meeting{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.meeting>div{border:2px solid var(--line);background:#fff;padding:10px;min-height:100px}
+.meeting b{display:block;text-transform:uppercase;font-size:9px;margin-bottom:6px}
+details.advanced{border:2px dashed var(--line);background:#fff;margin-top:10px}details.advanced summary{cursor:pointer;padding:10px;font-weight:900;text-transform:uppercase}details.advanced .inner{padding:0 10px 10px}
+.badge{display:inline-block;border:2px solid var(--line);padding:4px 6px;font-size:9px;font-weight:900;text-transform:uppercase}
+@media(max-width:800px){.mode-grid,.choice-grid,.rec-grid,.resultgrid,.meeting{grid-template-columns:1fr}.ticket-row,.ticket-row.head{grid-template-columns:32px 1fr}.ticket-row>*:nth-child(n+3){grid-column:2}.deskbar{position:static}}
+@media print{.top,.hero,.rule,.deskbar,.actions,.mode-grid,.seo,.footer{display:none!important}.app-section{display:block!important}.stepcard{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top"><a href="/">Office of Small Failures / The Priority Desk</a><span class="status">Case File 009 / Under investigation</span></header>
+
+<section class="hero">
+<div>
+<span class="kicker">Commercial prioritisation desk</span>
+<h1>The Priority Desk</h1>
+<p class="lede">What is this ticket worth — and should we do it?</p>
+</div>
+<aside class="memo">A number you can explain. Scope the change. Show the assumptions. Decide what deserves the sprint.</aside>
+</section>
+
+<div class="rule">Use fictional or approved non-confidential figures. This public tool and its plaintext exports are not a secure employer workspace. Entered data stays in this browser session; this page adds no analytics or external model calls.</div>
+
+<section id="start">
+<div class="mode-grid">
+<button class="mode" onclick="openMode('demo')"><strong>Try the four-ticket case</strong><small>Learn the decision method through the fictional April 2027 talk case.</small></button>
+<button class="mode" onclick="openMode('single')"><strong>Value one ticket</strong><small>Scope one piece of work and calculate a conditional value, hurdle or unknown outcome.</small></button>
+<button class="mode" onclick="openMode('compare')"><strong>Compare my tickets</strong><small>Build a small sprint board and test what actually fits your capacity.</small></button>
+</div>
+</section>
+
+<div class="deskbar hidden" id="deskbar">
+<button class="pill" onclick="showView('single')">Ticket desk</button>
+<button class="pill" onclick="showView('compare')">Sprint board</button>
+<button class="pill" onclick="showView('demo')">Teaching case</button>
+<button class="pill" onclick="showView('review')">Review</button>
+<button class="pill" onclick="showView('maths')">Learn the maths</button>
+<button class="pill" onclick="resetAll()">New session</button>
+</div>
+
+<section class="app-section" id="view-single">
+<div class="layout">
+<div>
+<div class="stepcard">
+<div class="stephead"><h2>1. Scope the change</h2><span class="badge">Start small</span></div>
+<div class="stepbody">
+<div class="field"><label>Short ticket label</label><input id="title" placeholder="e.g. Repair product-page rendering"></div>
+<label>Scope type</label>
+<div class="choice-grid" id="scopeChoices">
+<button class="choice" data-group="scope" data-value="one page"><strong>One page</strong></button>
+<button class="choice" data-group="scope" data-value="selected pages"><strong>Selected pages</strong></button>
+<button class="choice" data-group="scope" data-value="template"><strong>Template</strong></button>
+<button class="choice" data-group="scope" data-value="component / journey"><strong>Component / journey</strong></button>
+<button class="choice" data-group="scope" data-value="sitewide"><strong>Sitewide</strong><small>Still requires an eligible cohort.</small></button>
+<button class="choice" data-group="scope" data-value="operational / non-page"><strong>Operational / non-page</strong></button>
+</div>
+<div class="grid2" style="margin-top:10px">
+<div class="field"><label>Eligible cohort / denominator</label><input id="eligible" type="number" min="0" step="any" placeholder="e.g. 600000"><div class="help">Use the genuinely eligible untreated cohort, not automatically all traffic.</div></div>
+<div class="field"><label>Horizon (months)</label><input id="horizon" type="number" min="1" max="60" value="12"></div>
+</div>
+<div class="scope-preview" id="scopePreview">Choose a scope type and enter an eligible cohort. Sitewide never means “all traffic” by default.</div>
+</div></div>
+
+<div class="stepcard">
+<div class="stephead"><h2>2. Obligation gate</h2><span class="badge">Before ranking</span></div>
+<div class="stepbody">
+<div class="choice-grid" id="obligationChoices">
+<button class="choice" data-group="obligation" data-value="essential"><strong>Confirmed essential</strong><small>Security, compliance, accessibility or essential journey work.</small></button>
+<button class="choice" data-group="obligation" data-value="triage"><strong>Possible obligation</strong><small>Not verified yet: triage before discretionary ranking.</small></button>
+<button class="choice" data-group="obligation" data-value="discretionary"><strong>Discretionary optimisation</strong><small>Commercial comparison allowed if evidence and overlap are usable.</small></button>
+<button class="choice" data-group="obligation" data-value="enabler"><strong>Enabler / diagnostic</strong><small>Value the decision it unlocks, not an inherited headline benefit.</small></button>
+</div>
+<div id="obligationMessage" class="notice">Choose the ticket situation.</div>
+</div></div>
+
+<div class="stepcard">
+<div class="stephead"><h2>3. Choose the value mechanism</h2><span class="badge">No default uplift</span></div>
+<div class="stepbody">
+<div class="choice-grid" id="modelChoices">
+<button class="choice" data-group="model" data-value="journey_delta"><strong>Improve existing journey</strong><small>Eligible exposure × rate change × downstream conversion × contribution.</small></button>
+<button class="choice" data-group="model" data-value="acquisition_delta"><strong>Additional qualified visits</strong><small>Net additional visits × marginal conversion × contribution.</small></button>
+<button class="choice" data-group="model" data-value="failure_recovery"><strong>Recover a broken step</strong><small>Eligible journeys × defect × repair × outcome gap × contribution.</small></button>
+<button class="choice" data-group="model" data-value="direct_outcomes"><strong>Direct incremental outcomes</strong><small>Independent incremental outcomes × approved contribution.</small></button>
+<button class="choice" data-group="model" data-value="capacity"><strong>Operating cost / capacity</strong><small>Tasks × minutes saved × rate × usable redeployment.</small></button>
+<button class="choice" data-group="model" data-value="incident"><strong>Avoided incident loss</strong><small>Expected loss without change minus expected loss with change.</small></button>
+<button class="choice" data-group="model" data-value="unknown"><strong>Unknown / obligation only</strong><small>Return missing evidence and a next action, not £0.</small></button>
+</div>
+</div></div>
+
+<div class="stepcard">
+<div class="stephead"><h2>4. Enter only what this model needs</h2><span class="badge">Conditional arithmetic</span></div>
+<div class="stepbody">
+<div id="dynamicInputs" class="notice">Choose a value mechanism first.</div>
+<div class="grid2">
+<div class="field"><label>Full resource cost (£)</label><input id="cost" type="number" min="0" step="any" placeholder="e.g. 4800"></div>
+<div class="field"><label>Incremental cash within resource cost (£)</label><input id="cash" type="number" min="0" step="any" placeholder="e.g. 600"></div>
+<div class="field"><label>Engineering days</label><input id="engDays" type="number" min="0" step="any" placeholder="e.g. 6"></div>
+<div class="field"><label>Contribution per final outcome (£)</label><input id="value" type="number" min="0" step="any" placeholder="e.g. 120"></div>
+</div>
+<details class="advanced"><summary>Evidence and delivery details</summary><div class="inner">
+<div class="grid2">
+<div class="field"><label>Effect source type</label><select id="sourceType"><option value="">Choose</option><option>Measured baseline</option><option>Diagnostic</option><option>Assumed</option><option>Approved</option><option>Illustrative</option></select></div>
+<div class="field"><label>Evidence owner</label><input id="evidenceOwner" placeholder="Role or team"></div>
+<div class="field"><label>Source / reference</label><input id="sourceRef" placeholder="Experiment, dashboard, research, ticket"></div>
+<div class="field"><label>Earliest release</label><input id="release" type="date"></div>
+</div>
+<div class="field"><label>Limitations / counterevidence</label><textarea id="limitations" placeholder="What this evidence cannot establish"></textarea></div>
+<div class="field"><label>Dependencies / overlap</label><textarea id="dependencies" placeholder="Prerequisites, mutually exclusive work, overlapping cohort or mechanism"></textarea></div>
+</div></details>
+<div class="actions"><button class="btn primary" onclick="calculateTicket()">Calculate / find hurdle</button><button class="btn" onclick="loadLandingFixture()">Load fictional landing-page example</button></div>
+<div id="errors" role="alert"></div>
+</div></div>
+</div>
+
+<aside>
+<div class="stepcard">
+<div class="stephead"><h2>Result</h2><span class="state" id="resultState">Awaiting inputs</span></div>
+<div class="stepbody">
+<div class="bigresult" id="headline">—</div>
+<div id="stateMessage" class="notice">Benefit is not yet calculated.</div>
+<div class="resultgrid">
+<div class="metric"><span>Outcomes</span><b id="outcomesOut">—</b></div>
+<div class="metric"><span>Contribution</span><b id="benefitOut">—</b></div>
+<div class="metric"><span>Resource net</span><b id="netOut">—</b></div>
+<div class="metric"><span>Break-even</span><b id="hurdleOut">—</b></div>
+</div>
+<div class="calcchain" id="calcChain">Choose a model and enter the minimum defensible inputs.</div>
+</div></div>
+
+<div class="stepcard">
+<div class="stephead"><h2>Challenge one assumption</h2><span class="badge">Sensitivity</span></div>
+<div class="stepbody">
+<div class="grid2">
+<div class="field"><label>Challenge input</label><select id="challengeField"></select></div>
+<div class="field"><label>Alternative value</label><input id="challengeValue" type="number" step="any"></div>
+</div>
+<button class="btn secondary" onclick="runChallenge()">Hold everything else fixed</button>
+<div id="challengeOut" class="notice">Calculate the ticket first.</div>
+</div></div>
+
+<div class="stepcard">
+<div class="stephead"><h2>Decision record</h2><span class="badge">Human judgement</span></div>
+<div class="stepbody">
+<div class="rec-grid" id="recChoices">
+<button class="rec" data-value="Commit">Commit</button><button class="rec" data-value="Investigate">Investigate</button><button class="rec" data-value="Rescope">Rescope</button><button class="rec" data-value="Defer">Defer</button><button class="rec" data-value="Essential work">Essential work</button><button class="rec" data-value="Triage required">Triage required</button>
+</div>
+<div class="field" style="margin-top:10px"><label>Why?</label><textarea id="rationale" placeholder="Short human rationale"></textarea></div>
+<div class="meeting">
+<div><b>What we know</b><span id="meetKnow">—</span></div>
+<div><b>What we assume</b><span id="meetAssume">—</span></div>
+<div><b>What must happen</b><span id="meetMust">—</span></div>
+<div><b>What we recommend</b><span id="meetRec">—</span></div>
+</div>
+<div class="actions">
+<button class="btn dark" onclick="freezeSnapshot()">Freeze decision</button>
+<button class="btn" onclick="copyJira()">Copy Jira record</button>
+<button class="btn" onclick="exportJSON()">Export JSON</button>
+<button class="btn" onclick="exportCSV()">Export CSV</button>
+<button class="btn" onclick="window.print()">Print / Save as PDF</button>
+</div>
+<details class="advanced"><summary>Restore a Priority Desk JSON export</summary><div class="inner"><input type="file" id="restoreFile" accept=".json,application/json"><button class="btn" onclick="restoreJSON()">Restore locally</button><div class="help">Validated locally. Nothing is uploaded.</div></div></details>
+</div></div>
+</aside>
+</div>
+</section>
+
+<section class="app-section" id="view-compare">
+<div class="stepcard">
+<div class="stephead"><h2>Sprint comparison board</h2><span class="badge">No magic ranking score</span></div>
+<div class="stepbody">
+<div class="grid3">
+<div class="field"><label>Engineering days available</label><input id="capDays" type="number" value="9" min="0"></div>
+<div class="field"><label>Incremental cash budget (£)</label><input id="capCash" type="number" value="5000" min="0"></div>
+<div class="field"><label>Essential days reserved</label><input id="reservedDays" type="number" value="0" min="0"></div>
+</div>
+<div class="actions"><button class="btn primary" onclick="addCurrentToBoard()">Add current ticket</button><button class="btn" onclick="loadDemoBoard()">Load four fictional tickets</button><button class="btn secondary" onclick="checkBundle()">Check selected bundle</button></div>
+<div id="bundleMessage" class="notice">Unknown monetary values stay visible. They are not £0 and do not automatically sort to the bottom.</div>
+<div class="ticket-board" id="ticketBoard">
+<div class="ticket-row head"><span></span><span>Ticket</span><span>Status</span><span>Working value</span><span>Cost / days</span><span>Decision</span></div>
+</div>
+</div></div>
+</section>
+
+<section class="app-section" id="view-demo">
+<div class="stepcard">
+<div class="stephead"><h2>Four-ticket teaching case</h2><span class="badge">Illustrative only</span></div>
+<div class="stepbody">
+<p>January–December 2027 acquisition cohorts. Release 1 March. £120 is first-policy contribution, not premium. Nine engineering days are available.</p>
+<div class="demo-card"><h3>A / Mobile script performance</h3><p>6 engineering days. Working calculation eventually shows £5,760 contribution against £4,800 resource cost — but the uplift is not yet earned by evidence.</p></div>
+<div class="demo-card"><h3>B / Product-page rendering</h3><p>6 engineering days. Diagnosed acquisition mechanism. Working case: 2,000 net visits → 20 policies → £2,400 contribution against £7,200 cost.</p></div>
+<div class="demo-card"><h3>C / Quote-step hydration</h3><p>3 engineering days. Confirmed essential journey repair. Working case: 45 extra policies → £5,400 contribution against £2,400 cost.</p></div>
+<div class="demo-card"><h3>D / Shared framework rewrite</h3><p>20 engineering days. Effect unknown. Hurdle +0.15 percentage points. Overlap unresolved.</p></div>
+
+<h3>Interaction 1 — provisional choice</h3>
+<div class="choice-grid" id="demoPick1">
+<button class="choice" onclick="demoChoose('A',this)">A</button><button class="choice" onclick="demoChoose('B',this)">B</button><button class="choice" onclick="demoChoose('C',this)">C</button><button class="choice" onclick="demoChoose('D',this)">D</button>
+</div>
+<div class="actions"><button class="btn primary" onclick="revealDemo2()">Reveal A's calculation</button></div>
+<div id="demo2" class="hidden">
+<div class="notice good"><b>A working scenario:</b> 600,000 eligible visits × +0.10 percentage-point quote-start improvement = 600 extra quote starts × 8% downstream policy conversion = 48 policies × £120 contribution = £5,760. Cost £4,800. Resource net £960.</div>
+<h3>Interaction 2 — what has not been earned?</h3>
+<div class="choice-grid">
+<button class="choice" onclick="spotAnswer(false,this)">The 600,000 visits</button>
+<button class="choice" onclick="spotAnswer(true,this)">The +0.10 percentage-point uplift</button>
+<button class="choice" onclick="spotAnswer(false,this)">The £120 contribution</button>
+</div>
+<div id="spotFeedback" class="notice">Choose before revealing the final decision.</div>
+<div class="actions"><button class="btn primary" onclick="revealDemo3()">Reveal sprint constraints</button></div>
+</div>
+
+<div id="demo3" class="hidden">
+<div class="notice warn">C is confirmed essential, so reserve 3 of 9 engineering days first. A and B each need 6 days; D needs 20. A's working net wins the full-ticket comparison, but its uplift is unproven.</div>
+<p>A staged option costs £900 and one engineering day to investigate A while retaining a five-day implementation option. This does not prove the sales uplift.</p>
+<h3>Interaction 3 — what would you do?</h3>
+<div class="rec-grid">
+<button class="rec" onclick="finalDemo('Commit',this)">Commit A now</button>
+<button class="rec" onclick="finalDemo('Investigate',this)">C + investigate A</button>
+<button class="rec" onclick="finalDemo('Rescope',this)">Rescope B</button>
+<button class="rec" onclick="finalDemo('Defer',this)">Defer everything</button>
+</div>
+<div id="demoFinal" class="notice">Make the choice before reading the discussion outcome.</div>
+</div>
+</div></div>
+</section>
+
+<section class="app-section" id="view-review">
+<div class="stepcard">
+<div class="stephead"><h2>Review without rewriting history</h2><span class="badge">Frozen original</span></div>
+<div class="stepbody">
+<div id="snapshotStatus" class="notice">No frozen decision yet. Freeze a ticket from the desk first.</div>
+<div class="grid2">
+<div class="field"><label>Actual eligible exposure</label><input id="actualExposure" type="number" step="any"></div>
+<div class="field"><label>Observed final outcomes</label><input id="actualOutcomes" type="number" step="any"></div>
+<div class="field"><label>Technical delivery</label><select id="actualDelivery"><option>Unknown</option><option>Not delivered</option><option>Partly delivered</option><option>Delivered as scoped</option></select></div>
+<div class="field"><label>Review date</label><input id="reviewDate" type="date"></div>
+</div>
+<div class="field"><label>Major confounders / changes</label><textarea id="confounders" placeholder="Campaigns, pricing, outages, tracking, competitor changes..."></textarea></div>
+<div class="field"><label>Revised forecast / next action</label><textarea id="revised" placeholder="Keep this separate from the frozen original"></textarea></div>
+<button class="btn primary" onclick="saveReview()">Create linked review record</button>
+<div id="reviewOut" class="result">Observed change is not automatically the effect caused by this ticket.</div>
+</div></div>
+</section>
+
+<section class="app-section" id="view-maths">
+<div class="seo" style="margin-top:0">
+<h2>Learn the maths</h2>
+<p>The Priority Desk works from incremental business outcomes. It does not turn issue counts, rankings, milliseconds or a generic “confidence” percentage into money.</p>
+<h3>Percentage points are not relative percentages</h3>
+<p>10.0% → 10.1% is a <strong>+0.10 percentage-point</strong> change and a <strong>+1% relative</strong> change. The journey model uses the absolute rate change.</p>
+<h3>Journey improvement</h3>
+<p><strong>Outcomes = eligible exposure × absolute rate change × downstream conversion − adverse outcomes.</strong> Contribution = outcomes × contribution per outcome. Resource net = contribution − full resource cost.</p>
+<h3>Acquisition</h3>
+<p><strong>Outcomes = net additional qualified visits × marginal conversion.</strong> If you bridge clicks to visits, compare with-change and without-change clicks, apply visits-per-click, then subtract displacement.</p>
+<h3>Failure recovery</h3>
+<p><strong>Outcomes = eligible journeys × defect fraction × repaired fraction × outcome-probability gap.</strong> A break-even repaired fraction above 100% means the model cannot cover cost on those inputs.</p>
+<h3>Cash is not contribution is not capacity</h3>
+<p>Contribution gained, incremental cash spend and salaried capacity released are different viewpoints. Released time is not automatically cash saved.</p>
+<div class="notice">A measured baseline describes an input. It does not validate an intervention effect. A conditional scenario means the arithmetic follows from assumptions. A measured effect needs a defensible retrospective design.</div>
+</div>
+</section>
+
+<section class="seo">
+<h2>Commercial Jira ticket valuation without fake precision</h2>
+<p>The Priority Desk helps an in-house practitioner move through scope → value → challenge → choose → review. It accepts page-level, template, journey, sitewide and operational work, but only produces money when the entered mechanism and evidence support it.</p>
+<h3>Why some tickets should not get a pound value</h3>
+<p>Essential work can deserve capacity without a monetary forecast. Enabling or diagnostic work may need a cost cap and stop/continue condition. Where the effect is unsupported, the correct result is “benefit unknown”, a break-even hurdle, or a request for evidence — not an invented uplift.</p>
+<h3>How sprint comparison works</h3>
+<p>The comparison board keeps evidence status, working value, cost, engineering days and obligation status together. It checks capacity rather than multiplying money by a confidence score.</p>
+<h3>Privacy</h3>
+<p>The tool is static and client-side. It has no Jira connection, backend, external model call or analytics on this route. Manual entry is the primary route; exported JSON can be restored locally in the browser.</p>
+</section>
+
+<footer class="footer">Office of Small Failures / The Priority Desk / Tiny products. Public tests. Useful mistakes. / <a href="/contact/">Contact</a></footer>
+</div>
+
+<script>
+var state={scope:null,obligation:null,model:null,recommendation:null,last:null,snapshots:[],board:[],reviews:[],version:"priority-desk-1.0"};
+var modelFields={
+journey_delta:[
+["baselineRate","Baseline step rate (%)","10"],["delta","Absolute improvement (percentage points)","0.10"],["downstream","Downstream final-outcome conversion (%)","8"],["adverse","Additional adverse final outcomes","0"]],
+acquisition_delta:[
+["netVisits","Net additional qualified visits","2000"],["marginal","Marginal final conversion (%)","1"],["adverse","Additional adverse final outcomes","0"]],
+failure_recovery:[
+["defect","Defect fraction (%)","2"],["repair","Repaired fraction (%)","75"],["withoutDefect","Without-defect final conversion (%)","20"],["fallback","Existing fallback conversion (%)","5"],["adverse","Additional adverse final outcomes","0"]],
+direct_outcomes:[["direct","Net incremental final outcomes","25"]],
+capacity:[["tasks","Tasks in period","1200"],["minutes","Minutes saved per task","5"],["hourly","Loaded hourly rate (£)","40"],["utilisation","Verified usable redeployment (%)","50"]],
+incident:[["p0","Incident probability without change (%)","10"],["l0","Conditional loss without change (£)","50000"],["p1","Incident probability with change (%)","4"],["l1","Conditional loss with change (£)","50000"]],
+unknown:[]
+};
+function money(x){return x==null?"—":"£"+Number(x).toLocaleString("en-GB",{maximumFractionDigits:2})}
+function num(id){var e=document.getElementById(id);if(!e||e.value==="")return null;var n=Number(e.value);return Number.isFinite(n)?n:null}
+function textv(id){var e=document.getElementById(id);return e?e.value.trim():""}
+function pct(x,d){return x==null?"—":(x*100).toFixed(d==null?3:d)+"%"}
+function openMode(m){document.getElementById("start").classList.add("hidden");document.getElementById("deskbar").classList.remove("hidden");showView(m)}
+function showView(v){document.querySelectorAll(".app-section").forEach(function(x){x.classList.remove("active")});var t=document.getElementById("view-"+v);if(t)t.classList.add("active");document.querySelectorAll(".pill").forEach(function(x){x.classList.toggle("active",x.textContent.toLowerCase().indexOf(v==="single"?"ticket":v==="compare"?"sprint":v==="demo"?"teaching":v)>=0)})}
+document.querySelectorAll("[data-group]").forEach(function(btn){btn.addEventListener("click",function(){var g=btn.dataset.group;document.querySelectorAll('[data-group="'+g+'"]').forEach(function(x){x.classList.remove("selected")});btn.classList.add("selected");state[g]=btn.dataset.value;if(g==="model")renderModel();if(g==="scope")updateScope();if(g==="obligation")updateObligation()})});
+document.querySelectorAll(".rec").forEach(function(btn){if(btn.dataset.value)btn.addEventListener("click",function(){document.querySelectorAll("#recChoices .rec").forEach(function(x){x.classList.remove("selected")});btn.classList.add("selected");state.recommendation=btn.dataset.value;updateMeeting()})});
+["title","eligible","horizon"].forEach(function(id){document.getElementById(id).addEventListener("input",updateScope)});
+
+function updateScope(){
+var s=state.scope||"[scope not chosen]",e=num("eligible"),h=num("horizon")||12;
+document.getElementById("scopePreview").textContent="This estimate covers "+(e==null?"a not-yet-bounded eligible cohort":e.toLocaleString()+" eligible units")+" in "+s+" scope over "+h+" months. It excludes users or activity outside the eligible cohort.";
+}
+function updateObligation(){
+var m={essential:"Essential work: reserve capacity before discretionary comparison. Money is optional context.",triage:"Obligation unresolved. Triage before discretionary comparison.",discretionary:"Discretionary optimisation: commercial comparison is allowed once evidence and overlap are usable.",enabler:"Enabler / diagnostic: show the decision it enables, cost cap and stop/continue conditions. Do not inherit a parent benefit."};
+var el=document.getElementById("obligationMessage");el.textContent=m[state.obligation]||"Choose the ticket situation.";el.className="notice "+(state.obligation==="essential"?"good":state.obligation==="triage"?"warn":"");
+}
+function renderModel(){
+var holder=document.getElementById("dynamicInputs"),fields=modelFields[state.model]||[];
+if(state.model==="unknown"){holder.className="notice warn";holder.innerHTML="<b>Benefit is unknown. This is not a zero-value ticket.</b><br>Record the next evidence request or obligation basis instead of inventing an uplift.";return}
+holder.className="";
+holder.innerHTML='<div class="grid2">'+fields.map(function(f){return '<div class="field"><label>'+f[1]+'</label><input id="m_'+f[0]+'" type="number" step="any" placeholder="'+f[2]+'"></div>'}).join("")+"</div>";
+}
+function collectInputs(){
+var out={};(modelFields[state.model]||[]).forEach(function(f){out[f[0]]=num("m_"+f[0])});return out
+}
+function validateBase(){
+var errs=[],cost=num("cost"),cash=num("cash"),eligible=num("eligible");
+if(!state.scope)errs.push("Choose a scope type.");
+if(!state.obligation)errs.push("Choose the obligation status.");
+if(!state.model)errs.push("Choose a value mechanism.");
+if(cash!=null&&cost!=null&&cash>cost)errs.push("Incremental cash cannot exceed full resource cost.");
+if(["journey_delta","failure_recovery"].indexOf(state.model)>=0&&(eligible==null||eligible<=0))errs.push("This model needs a positive eligible cohort.");
+return errs
+}
+function calc(model,inp,override){
+var x=Object.assign({},inp,override||{}),E=num("eligible"),C=num("cost"),v=num("value"),o={model:model,outcomes:null,benefit:null,net:null,hurdle:null,chain:"",state:"Conditional"};
+function finishOutcomes(out){o.outcomes=out;if(out!=null&&v!=null){o.benefit=out*v;o.net=C==null?null:o.benefit-C}}
+if(model==="unknown"){o.state="Unknown";o.chain="Benefit is unknown. This is not a zero-value ticket.";return o}
+if(model==="journey_delta"){
+ if([E,x.delta,x.downstream].some(function(z){return z==null})){o.state="Unknown";o.chain="Need eligible exposure, rate change and downstream conversion.";return o}
+ var d=x.delta/100,q=x.downstream/100,H=x.adverse||0; if((d+(x.baselineRate||0)/100)>1){o.state="Invalid";o.chain="Post-change journey rate exceeds 100%.";return o}
+ finishOutcomes(E*d*q-H); if(C!=null&&v>0&&E*q>0)o.hurdle=(C/v+H)/(E*q);
+ o.chain=E.toLocaleString()+" eligible × "+x.delta+" percentage points × "+x.downstream+"% downstream − "+H+" adverse outcomes = "+o.outcomes.toFixed(2)+" incremental outcomes.";
+}
+if(model==="acquisition_delta"){
+ if(x.netVisits==null||x.marginal==null){o.state="Unknown";o.chain="Need net additional qualified visits and marginal conversion.";return o}
+ var p=x.marginal/100,H2=x.adverse||0;finishOutcomes(x.netVisits*p-H2);if(C!=null&&v>0&&p>0)o.hurdle=(C/v+H2)/p;
+ o.chain=x.netVisits.toLocaleString()+" net additional visits × "+x.marginal+"% marginal conversion − "+H2+" adverse outcomes = "+o.outcomes.toFixed(2)+" incremental outcomes.";
+}
+if(model==="failure_recovery"){
+ if([E,x.defect,x.repair,x.withoutDefect,x.fallback].some(function(z){return z==null})){o.state="Unknown";o.chain="Need eligible journeys, defect fraction, repair fraction and outcome gap.";return o}
+ var f=x.defect/100,r=x.repair/100,g=(x.withoutDefect-x.fallback)/100,H3=x.adverse||0;finishOutcomes(E*f*r*g-H3);if(C!=null&&v>0&&E*f*g>0)o.hurdle=(C/v+H3)/(E*f*g);
+ o.chain=E.toLocaleString()+" eligible × "+x.defect+"% defect × "+x.repair+"% repaired × "+(x.withoutDefect-x.fallback).toFixed(2)+" percentage-point outcome gap = "+o.outcomes.toFixed(2)+" incremental outcomes.";
+}
+if(model==="direct_outcomes"){
+ if(x.direct==null){o.state="Unknown";o.chain="Need an independently estimated incremental outcome count.";return o}finishOutcomes(x.direct);if(C!=null&&v>0)o.hurdle=C/v;o.chain=x.direct+" incremental outcomes × "+(v==null?"unknown contribution":money(v))+".";
+}
+if(model==="capacity"){
+ if([x.tasks,x.minutes,x.hourly,x.utilisation].some(function(z){return z==null})){o.state="Unknown";o.chain="Hours may be known while monetised capacity remains unknown. Enter tasks, minutes, loaded rate and verified usable redeployment.";return o}
+ var hours=x.tasks*x.minutes/60,cap=hours*x.hourly*(x.utilisation/100);o.outcomes=hours;o.benefit=cap;o.net=C==null?null:cap-C;if(C!=null&&x.tasks>0&&x.hourly>0&&x.utilisation>0)o.hurdle=60*C/(x.tasks*x.hourly*(x.utilisation/100));o.chain=x.tasks+" tasks × "+x.minutes+" minutes / 60 = "+hours.toFixed(2)+" hours released. × "+money(x.hourly)+"/hour × "+x.utilisation+"% usable redeployment = "+money(cap)+" capacity value. Time released is not automatically cash saved.";
+}
+if(model==="incident"){
+ if([x.p0,x.l0,x.p1,x.l1].some(function(z){return z==null})){o.state="Unknown";o.chain="Need defended probabilities and conditional loss values; otherwise use incident scenarios instead of expected value.";return o}
+ var b=(x.p0/100)*x.l0-(x.p1/100)*x.l1;o.benefit=b;o.net=C==null?null:b-C;o.outcomes=null;if(C!=null&&x.l0===x.l1&&x.l0>0)o.hurdle=C/x.l0;o.chain=x.p0+"% × "+money(x.l0)+" − "+x.p1+"% × "+money(x.l1)+" = "+money(b)+" expected avoided loss.";
+}
+return o
+}
+function calculateTicket(){
+var errs=validateBase(),box=document.getElementById("errors");box.innerHTML="";
+if(errs.length){box.className="notice bad";box.innerHTML="<b>Fix these first:</b><br>"+errs.join("<br>");return}
+var out=calc(state.model,collectInputs());state.last=out;renderResult(out);updateMeeting();populateChallenge();
+}
+function renderResult(o){
+var rs=document.getElementById("resultState"),sm=document.getElementById("stateMessage");
+rs.textContent=o.state;
+if(o.state==="Unknown"){sm.textContent="Benefit is unknown. This is not a zero-value ticket.";sm.className="notice warn"}
+else if(o.state==="Invalid"){sm.textContent=o.chain;sm.className="notice bad"}
+else{sm.textContent="Scenario calculation, not a committed forecast or probability interval.";sm.className="notice"}
+document.getElementById("headline").textContent=o.benefit==null?(o.hurdle!=null?"Hurdle only":"Benefit unknown"):money(o.benefit);
+document.getElementById("outcomesOut").textContent=o.outcomes==null?"—":Number(o.outcomes).toLocaleString("en-GB",{maximumFractionDigits:2});
+document.getElementById("benefitOut").textContent=money(o.benefit);
+document.getElementById("netOut").textContent=money(o.net);
+var unit=state.model==="journey_delta"?" pp":state.model==="failure_recovery"?" repair":state.model==="capacity"?" min/task":state.model==="incident"?" probability reduction":state.model==="acquisition_delta"?" visits":" outcomes";
+var h=o.hurdle;if(h!=null&&(state.model==="journey_delta"||state.model==="incident"||state.model==="failure_recovery"))h=h*100;
+document.getElementById("hurdleOut").textContent=h==null?"—":Number(h).toLocaleString("en-GB",{maximumFractionDigits:4})+unit;
+document.getElementById("calcChain").textContent=o.chain+(o.hurdle!=null?" This is the improvement required to cover cost, not a predicted uplift.":"");
+}
+function populateChallenge(){
+var s=document.getElementById("challengeField");s.innerHTML="";(modelFields[state.model]||[]).forEach(function(f){var op=document.createElement("option");op.value=f[0];op.textContent=f[1];s.appendChild(op)});
+}
+function runChallenge(){
+if(!state.last)return;var k=document.getElementById("challengeField").value,v=num("challengeValue");if(!k||v==null)return;
+var base=collectInputs(),alt=calc(state.model,base,(function(){var x={};x[k]=v;return x})());
+var before=state.last.net,after=alt.net;document.getElementById("challengeOut").textContent="Holding everything else fixed, changing "+k+" to "+v+" moves resource net from "+money(before)+" to "+money(after)+". "+(after!=null&&after<0?"This crosses below break-even or remains below it.":"");
+}
+function updateMeeting(){
+var src=textv("sourceType")||"No evidence source declared";document.getElementById("meetKnow").textContent=(state.scope||"Unbounded scope")+"; "+src+".";
+document.getElementById("meetAssume").textContent=state.last&&state.last.state!=="Unknown"?state.last.chain:"Effect size or monetary link is not yet supported.";
+document.getElementById("meetMust").textContent=state.last&&state.last.hurdle!=null?"Meet the displayed break-even hurdle and delivery conditions.":"Resolve missing inputs, evidence, obligation or overlap before treating this as decision-ready.";
+document.getElementById("meetRec").textContent=(state.recommendation||"No recommendation chosen")+(textv("rationale")?": "+textv("rationale"):"");
+}
+document.getElementById("rationale").addEventListener("input",updateMeeting);
+
+function ticketRecord(){
+return {id:"ticket-"+Date.now(),title:textv("title")||"Untitled ticket",scopeType:state.scope,eligible:num("eligible"),horizon:num("horizon"),obligation:state.obligation,model:state.model,inputs:collectInputs(),cost:num("cost"),cash:num("cash"),engineeringDays:num("engDays"),valuePerOutcome:num("value"),sourceType:textv("sourceType"),sourceRef:textv("sourceRef"),evidenceOwner:textv("evidenceOwner"),limitations:textv("limitations"),dependencies:textv("dependencies"),recommendation:state.recommendation,rationale:textv("rationale"),output:state.last?JSON.parse(JSON.stringify(state.last)):null,formulaVersion:"1.0"};
+}
+function freezeSnapshot(){
+var rec=ticketRecord();rec.revisionId="rev-"+Date.now();rec.timestamp=new Date().toISOString();state.snapshots.push(JSON.parse(JSON.stringify(rec)));document.getElementById("snapshotStatus").textContent="Frozen: "+rec.title+" at "+rec.timestamp+". Editing the desk will not rewrite this snapshot.";alert("Decision frozen. Review it later without rewriting history.")
+}
+function jiraText(){
+var r=ticketRecord(),o=r.output;
+if(!o||o.state==="Unknown")return r.title+"\n\nBenefit is unknown. This is not a zero-value ticket.\nScope: "+(r.scopeType||"not bounded")+"\nEligible cohort: "+(r.eligible==null?"unknown":r.eligible)+"\nMechanism: "+(r.model||"unknown")+"\nMissing/next evidence: "+(r.limitations||"Declare the effect evidence and bounded denominator.")+"\nRecommendation: "+(r.recommendation||"not chosen")+"\nRationale: "+(r.rationale||"not recorded");
+return r.title+"\n\nAt the entered assumption, this ticket produces "+(o.outcomes==null?"an incident/capacity result":o.outcomes.toFixed(2)+" additional outcomes")+" and "+money(o.benefit)+" contribution/value against "+money(r.cost)+" resource cost, giving "+money(o.net)+" resource net over "+r.horizon+" months. Evidence status: "+(r.sourceType||"not declared")+".\n\nScope: "+r.scopeType+"; eligible cohort "+r.eligible+".\nMechanism: "+r.model+".\nCalculation: "+o.chain+"\nBreak-even: "+document.getElementById("hurdleOut").textContent+".\nCash within resource cost: "+money(r.cash)+". Engineering days: "+(r.engineeringDays==null?"unknown":r.engineeringDays)+".\nEvidence/reference: "+(r.sourceRef||"not supplied")+".\nLimitations/counterevidence: "+(r.limitations||"not supplied")+".\nDependencies/overlap: "+(r.dependencies||"not supplied")+".\nRecommendation: "+(r.recommendation||"not chosen")+". "+(r.rationale||"")+"\n\nConditional scenario, not a committed forecast or probability interval.";
+}
+async function copyJira(){var t=jiraText();try{await navigator.clipboard.writeText(t);alert("Jira record copied.")}catch(e){prompt("Copy this Jira record:",t)}}
+function download(name,type,text){var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},100)}
+function exportJSON(){var payload={schema:"osf-priority-desk",version:state.version,exportedAt:new Date().toISOString(),working:ticketRecord(),snapshots:state.snapshots,board:state.board,reviews:state.reviews};download("priority-desk.json","application/json",JSON.stringify(payload,null,2))}
+function safeCsv(v){v=v==null?"":String(v);if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'}
+function exportCSV(){var rows=[["title","scope","model","obligation","outcomes","benefit","cost","net","engineering_days","recommendation"]];state.board.concat([ticketRecord()]).forEach(function(r){var o=r.output||{};rows.push([r.title,r.scopeType,r.model,r.obligation,o.outcomes,o.benefit,r.cost,o.net,r.engineeringDays,r.recommendation])});download("priority-desk.csv","text/csv",rows.map(function(r){return r.map(safeCsv).join(",")}).join("\n"))}
+function restoreJSON(){
+var f=document.getElementById("restoreFile").files[0];if(!f)return alert("Choose a JSON export.");if(f.size>1000000)return alert("File too large.");
+var rd=new FileReader();rd.onload=function(){try{var x=JSON.parse(rd.result);if(x.schema!=="osf-priority-desk"||x.version!=="priority-desk-1.0")throw new Error("Unsupported Priority Desk version");state.snapshots=Array.isArray(x.snapshots)?x.snapshots:[];state.board=Array.isArray(x.board)?x.board:[];state.reviews=Array.isArray(x.reviews)?x.reviews:[];renderBoard();document.getElementById("snapshotStatus").textContent="Restored "+state.snapshots.length+" frozen snapshot(s) into a new local working session.";alert("Priority Desk export restored locally.")}catch(e){alert("Restore rejected: "+e.message)}};rd.readAsText(f)
+}
+
+function addCurrentToBoard(){var r=ticketRecord();if(!r.title||r.title==="Untitled ticket")return alert("Give the ticket a short label first.");state.board.push(r);renderBoard();showView("compare")}
+function demoFixtures(){
+return [
+{id:"A",title:"A / Mobile script performance",obligation:"discretionary",engineeringDays:6,cash:600,cost:4800,output:{benefit:5760,net:960,state:"Conditional"},recommendation:"Investigate"},
+{id:"B",title:"B / Product-page rendering",obligation:"discretionary",engineeringDays:6,cash:2400,cost:7200,output:{benefit:2400,net:-4800,state:"Conditional"},recommendation:"Defer"},
+{id:"C",title:"C / Quote-step hydration",obligation:"essential",engineeringDays:3,cash:0,cost:2400,output:{benefit:5400,net:3000,state:"Conditional"},recommendation:"Essential work"},
+{id:"D",title:"D / Shared framework rewrite",obligation:"discretionary",engineeringDays:20,cash:3000,cost:18000,output:{benefit:null,net:null,state:"Unknown"},recommendation:"Rescope"}
+]}
+function loadDemoBoard(){state.board=demoFixtures();renderBoard()}
+function renderBoard(){
+var b=document.getElementById("ticketBoard");b.innerHTML='<div class="ticket-row head"><span></span><span>Ticket</span><span>Status</span><span>Working value</span><span>Cost / days</span><span>Decision</span></div>';
+state.board.forEach(function(r,i){var o=r.output||{};var row=document.createElement("div");row.className="ticket-row";row.innerHTML='<input type="checkbox" data-board="'+i+'"><b>'+escapeHtml(r.title)+'</b><span>'+escapeHtml(r.obligation||"unknown")+' / '+escapeHtml(o.state||"unknown")+'</span><span>'+(o.benefit==null?"Benefit unknown":money(o.benefit))+'</span><span>'+money(r.cost)+' / '+(r.engineeringDays==null?"?":r.engineeringDays)+' days</span><span>'+escapeHtml(r.recommendation||"—")+'</span>';b.appendChild(row)})
+}
+function checkBundle(){
+var picks=[...document.querySelectorAll("[data-board]:checked")].map(function(x){return state.board[Number(x.dataset.board)]});
+var days=picks.reduce(function(a,r){return a+(Number(r.engineeringDays)||0)},0),cash=picks.reduce(function(a,r){return a+(Number(r.cash)||0)},0),capD=num("capDays")||0,res=num("reservedDays")||0,capC=num("capCash")||0;
+var essential=picks.filter(function(r){return r.obligation==="essential"}).reduce(function(a,r){return a+(Number(r.engineeringDays)||0)},0);
+var msg="Selected bundle uses "+days+" engineering days and "+money(cash)+" incremental cash. ";
+if(days>capD||cash>capC)msg+="INFEASIBLE: exceeds entered capacity or cash budget.";
+else msg+="Feasible on entered capacity. Review dependencies, mutually exclusive options and overlap before adding headline benefits.";
+if(res>0)msg+=" "+res+" days are already reserved for essential work.";
+document.getElementById("bundleMessage").textContent=msg;
+}
+function loadLandingFixture(){
+state.scope="one page";state.obligation="discretionary";state.model="journey_delta";
+document.querySelectorAll("[data-group]").forEach(function(x){x.classList.toggle("selected",x.dataset.value===state.scope||x.dataset.value===state.obligation||x.dataset.value===state.model)});
+document.getElementById("title").value="Fictional landing-page improvement";document.getElementById("eligible").value=20000;document.getElementById("cost").value=1500;document.getElementById("cash").value=0;document.getElementById("engDays").value=2;document.getElementById("value").value=50;renderModel();document.getElementById("m_baselineRate").value=0;document.getElementById("m_delta").value=0.2;document.getElementById("m_downstream").value=100;document.getElementById("m_adverse").value=0;updateScope();updateObligation();calculateTicket()
+}
+function demoChoose(v,el){document.querySelectorAll("#demoPick1 .choice").forEach(function(x){x.classList.remove("selected")});el.classList.add("selected")}
+function revealDemo2(){document.getElementById("demo2").classList.remove("hidden")}
+function spotAnswer(ok,el){el.parentElement.querySelectorAll(".choice").forEach(function(x){x.classList.remove("selected")});el.classList.add("selected");document.getElementById("spotFeedback").textContent=ok?"Yes. The arithmetic is valid if +0.10 pp happens, but the uplift itself is still an unsupported assumption.":"Not the key gap. The deliberately unsupported part is the +0.10 percentage-point uplift assumption."}
+function revealDemo3(){document.getElementById("demo3").classList.remove("hidden")}
+function finalDemo(v,el){el.parentElement.querySelectorAll(".rec").forEach(function(x){x.classList.remove("selected")});el.classList.add("selected");document.getElementById("demoFinal").textContent=v==="Investigate"?"Discussion outcome: reserve C as essential, then investigate A with a £900 / one-day diagnostic while retaining the five-day implementation option. This preserves optionality without pretending the diagnostic proves sales uplift.":"Useful choice to discuss. The built-in case is designed to show why capacity, obligation status and evidence can change the provisional monetary ranking."}
+
+function saveReview(){
+if(!state.snapshots.length)return alert("Freeze a decision first.");
+var snap=state.snapshots[state.snapshots.length-1],r={snapshotRevisionId:snap.revisionId,timestamp:new Date().toISOString(),actualExposure:num("actualExposure"),actualOutcomes:num("actualOutcomes"),delivery:textv("actualDelivery"),reviewDate:textv("reviewDate"),confounders:textv("confounders"),revised:textv("revised")};state.reviews.push(r);document.getElementById("reviewOut").textContent="Review linked to "+snap.revisionId+". Original assumptions remain frozen. Observed change is not automatically the effect caused by this ticket. Revised estimates are stored separately."
+}
+function escapeHtml(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function resetAll(){if(!confirm("Clear this working session?"))return;location.reload()}
+renderBoard();
+</script>
+</body>
+</html>
