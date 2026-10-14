@@ -100,6 +100,18 @@ details.advanced{border:2px dashed var(--line);background:#fff;margin-top:10px}d
 <div class="field"><label>Eligible cohort / denominator</label><input id="eligible" type="number" min="0" step="any" placeholder="e.g. 600000"><div class="help">Use the genuinely eligible untreated cohort, not automatically all traffic.</div></div>
 <div class="field"><label>Horizon (months)</label><input id="horizon" type="number" min="1" max="60" value="12"></div>
 </div>
+<details class="advanced"><summary>Optional scope filters + eligible-share calculator</summary><div class="inner">
+<div class="grid2">
+<div class="field"><label>Total volume before eligibility filter</label><input id="totalVolume" type="number" min="0" step="any" placeholder="e.g. 1000000"></div>
+<div class="field"><label>Eligible share (%)</label><input id="eligibleShare" type="number" min="0" max="100" step="any" placeholder="e.g. 40"><div class="help">If both are entered, eligible cohort = total × share. The share is applied once.</div></div>
+<div class="field"><label>Product / proposition</label><input id="scopeProduct" placeholder="Optional"></div>
+<div class="field"><label>Device / browser</label><input id="scopeDevice" placeholder="Optional"></div>
+<div class="field"><label>Geography</label><input id="scopeGeo" placeholder="Optional"></div>
+<div class="field"><label>Channel</label><input id="scopeChannel" placeholder="Optional"></div>
+<div class="field"><label>Journey step</label><input id="scopeJourney" placeholder="Optional"></div>
+<div class="field"><label>Explicit exclusions</label><input id="scopeExclusions" placeholder="Who / what is outside the estimate?"></div>
+</div>
+</div></details>
 <div class="scope-preview" id="scopePreview">Choose a scope type and enter an eligible cohort. Sitewide never means “all traffic” by default.</div>
 </div></div>
 
@@ -167,6 +179,19 @@ details.advanced{border:2px dashed var(--line);background:#fff;margin-top:10px}d
 <div class="metric"><span>Break-even</span><b id="hurdleOut">—</b></div>
 </div>
 <div class="calcchain" id="calcChain">Choose a model and enter the minimum defensible inputs.</div>
+</div></div>
+
+<div class="stepcard">
+<div class="stephead"><h2>Five authored scenarios</h2><span class="badge">Not probabilities</span></div>
+<div class="stepbody">
+<p class="help">Enter explicit effect values in the same unit as the working assumption. “No improvement” is always zero incremental benefit with full project cost.</p>
+<div class="grid3">
+<div class="field"><label>Low effect</label><input id="scenarioLow" type="number" step="any"></div>
+<div class="field"><label>Upside effect</label><input id="scenarioUpside" type="number" step="any"></div>
+<div class="field"><label>Adverse effect</label><input id="scenarioAdverse" type="number" step="any"></div>
+</div>
+<button class="btn secondary" onclick="runScenarios()">Calculate scenarios</button>
+<div id="scenarioOut" class="calcchain">Calculate the working case first. Scenarios are authored cases, not confidence intervals.</div>
 </div></div>
 
 <div class="stepcard">
@@ -321,7 +346,7 @@ var modelFields={
 journey_delta:[
 ["baselineRate","Baseline step rate (%)","10"],["delta","Absolute improvement (percentage points)","0.10"],["downstream","Downstream final-outcome conversion (%)","8"],["adverse","Additional adverse final outcomes","0"]],
 acquisition_delta:[
-["netVisits","Net additional qualified visits","2000"],["marginal","Marginal final conversion (%)","1"],["adverse","Additional adverse final outcomes","0"]],
+["netVisits","Net additional qualified visits (direct entry)","2000"],["withClicks","With-change clicks (optional bridge)","24000"],["withoutClicks","Without-change clicks (optional bridge)","20000"],["visitsPerClick","Visits per click (optional bridge)","0.75"],["displaced","Displaced visits (optional bridge)","1000"],["marginal","Marginal final conversion (%)","1"],["adverse","Additional adverse final outcomes","0"]],
 failure_recovery:[
 ["defect","Defect fraction (%)","2"],["repair","Repaired fraction (%)","75"],["withoutDefect","Without-defect final conversion (%)","20"],["fallback","Existing fallback conversion (%)","5"],["adverse","Additional adverse final outcomes","0"]],
 direct_outcomes:[["direct","Net incremental final outcomes","25"]],
@@ -337,11 +362,14 @@ function openMode(m){document.getElementById("start").classList.add("hidden");do
 function showView(v){document.querySelectorAll(".app-section").forEach(function(x){x.classList.remove("active")});var t=document.getElementById("view-"+v);if(t)t.classList.add("active");document.querySelectorAll(".pill").forEach(function(x){x.classList.toggle("active",x.textContent.toLowerCase().indexOf(v==="single"?"ticket":v==="compare"?"sprint":v==="demo"?"teaching":v)>=0)})}
 document.querySelectorAll("[data-group]").forEach(function(btn){btn.addEventListener("click",function(){var g=btn.dataset.group;document.querySelectorAll('[data-group="'+g+'"]').forEach(function(x){x.classList.remove("selected")});btn.classList.add("selected");state[g]=btn.dataset.value;if(g==="model")renderModel();if(g==="scope")updateScope();if(g==="obligation")updateObligation()})});
 document.querySelectorAll(".rec").forEach(function(btn){if(btn.dataset.value)btn.addEventListener("click",function(){document.querySelectorAll("#recChoices .rec").forEach(function(x){x.classList.remove("selected")});btn.classList.add("selected");state.recommendation=btn.dataset.value;updateMeeting()})});
-["title","eligible","horizon"].forEach(function(id){document.getElementById(id).addEventListener("input",updateScope)});
+["title","eligible","horizon","totalVolume","eligibleShare","scopeProduct","scopeDevice","scopeGeo","scopeChannel","scopeJourney","scopeExclusions"].forEach(function(id){document.getElementById(id).addEventListener("input",updateScope)});
 
 function updateScope(){
-var s=state.scope||"[scope not chosen]",e=num("eligible"),h=num("horizon")||12;
-document.getElementById("scopePreview").textContent="This estimate covers "+(e==null?"a not-yet-bounded eligible cohort":e.toLocaleString()+" eligible units")+" in "+s+" scope over "+h+" months. It excludes users or activity outside the eligible cohort.";
+var s=state.scope||"[scope not chosen]",total=num("totalVolume"),share=num("eligibleShare"),e=num("eligible"),h=num("horizon")||12;
+if(total!=null&&share!=null){e=total*(share/100);document.getElementById("eligible").value=String(e)}
+var filters=[textv("scopeProduct"),textv("scopeDevice"),textv("scopeGeo"),textv("scopeChannel"),textv("scopeJourney")].filter(Boolean);
+var exclusion=textv("scopeExclusions")||"activity outside the eligible cohort";
+document.getElementById("scopePreview").textContent="This estimate covers "+(e==null?"a not-yet-bounded eligible cohort":e.toLocaleString("en-GB",{maximumFractionDigits:2})+" eligible units")+" in "+s+" scope over "+h+" months"+(filters.length?" for "+filters.join(" / "):"")+". It excludes "+exclusion+".";
 }
 function updateObligation(){
 var m={essential:"Essential work: reserve capacity before discretionary comparison. Money is optional context.",triage:"Obligation unresolved. Triage before discretionary comparison.",discretionary:"Discretionary optimisation: commercial comparison is allowed once evidence and overlap are usable.",enabler:"Enabler / diagnostic: show the decision it enables, cost cap and stop/continue conditions. Do not inherit a parent benefit."};
@@ -376,9 +404,11 @@ if(model==="journey_delta"){
  o.chain=E.toLocaleString()+" eligible × "+x.delta+" percentage points × "+x.downstream+"% downstream − "+H+" adverse outcomes = "+o.outcomes.toFixed(2)+" incremental outcomes.";
 }
 if(model==="acquisition_delta"){
- if(x.netVisits==null||x.marginal==null){o.state="Unknown";o.chain="Need net additional qualified visits and marginal conversion.";return o}
- var p=x.marginal/100,H2=x.adverse||0;finishOutcomes(x.netVisits*p-H2);if(C!=null&&v>0&&p>0)o.hurdle=(C/v+H2)/p;
- o.chain=x.netVisits.toLocaleString()+" net additional visits × "+x.marginal+"% marginal conversion − "+H2+" adverse outcomes = "+o.outcomes.toFixed(2)+" incremental outcomes.";
+ var V=x.netVisits,bridgeUsed=false;
+ if(V==null&&[x.withClicks,x.withoutClicks,x.visitsPerClick,x.displaced].every(function(z){return z!=null})){V=(x.withClicks-x.withoutClicks)*x.visitsPerClick-x.displaced;bridgeUsed=true}
+ if(V==null||x.marginal==null){o.state="Unknown";o.chain="Need net additional qualified visits, or a complete with/without click-to-visit bridge, plus marginal conversion.";return o}
+ var p=x.marginal/100,H2=x.adverse||0;finishOutcomes(V*p-H2);if(C!=null&&v>0&&p>0)o.hurdle=(C/v+H2)/p;
+ o.chain=(bridgeUsed?"("+x.withClicks+" with-change clicks − "+x.withoutClicks+" without-change clicks) × "+x.visitsPerClick+" visits/click − "+x.displaced+" displaced visits = "+V.toLocaleString()+" net visits. ":"")+V.toLocaleString()+" net additional visits × "+x.marginal+"% marginal conversion − "+H2+" adverse outcomes = "+o.outcomes.toFixed(2)+" incremental outcomes.";
 }
 if(model==="failure_recovery"){
  if([E,x.defect,x.repair,x.withoutDefect,x.fallback].some(function(z){return z==null})){o.state="Unknown";o.chain="Need eligible journeys, defect fraction, repair fraction and outcome gap.";return o}
@@ -421,6 +451,18 @@ document.getElementById("calcChain").textContent=o.chain+(o.hurdle!=null?" This 
 function populateChallenge(){
 var s=document.getElementById("challengeField");s.innerHTML="";(modelFields[state.model]||[]).forEach(function(f){var op=document.createElement("option");op.value=f[0];op.textContent=f[1];s.appendChild(op)});
 }
+function primaryEffectKey(model){return {journey_delta:"delta",acquisition_delta:"netVisits",failure_recovery:"repair",direct_outcomes:"direct",capacity:"minutes",incident:"p1"}[model]||null}
+function runScenarios(){
+if(!state.last)return;
+var key=primaryEffectKey(state.model),base=collectInputs(),C=num("cost");
+if(!key){document.getElementById("scenarioOut").textContent="This route does not have a single scenario effect input.";return}
+var working=base[key];
+if(state.model==="acquisition_delta"&&working==null&&[base.withClicks,base.withoutClicks,base.visitsPerClick,base.displaced].every(function(z){return z!=null}))working=(base.withClicks-base.withoutClicks)*base.visitsPerClick-base.displaced;
+var vals={Low:num("scenarioLow"),Working:working,Upside:num("scenarioUpside"),Adverse:num("scenarioAdverse")},rows=[];
+Object.keys(vals).forEach(function(name){var val=vals[name];if(val==null){rows.push(name+": not authored");return}var over={};over[key]=val;if(state.model==="acquisition_delta")over.netVisits=val;var r=calc(state.model,base,over);rows.push(name+": effect "+val+" → "+(r.benefit==null?"benefit unknown":money(r.benefit))+" contribution/value; "+(r.net==null?"net unknown":money(r.net)+" resource net"))});
+rows.splice(1,0,"No improvement: £0 incremental benefit; "+(C==null?"resource net unknown":money(-C)+" resource net")+".");
+document.getElementById("scenarioOut").textContent=rows.join("\n");
+}
 function runChallenge(){
 if(!state.last)return;var k=document.getElementById("challengeField").value,v=num("challengeValue");if(!k||v==null)return;
 var base=collectInputs(),alt=calc(state.model,base,(function(){var x={};x[k]=v;return x})());
@@ -435,7 +477,7 @@ document.getElementById("meetRec").textContent=(state.recommendation||"No recomm
 document.getElementById("rationale").addEventListener("input",updateMeeting);
 
 function ticketRecord(){
-return {id:"ticket-"+Date.now(),title:textv("title")||"Untitled ticket",scopeType:state.scope,eligible:num("eligible"),horizon:num("horizon"),obligation:state.obligation,model:state.model,inputs:collectInputs(),cost:num("cost"),cash:num("cash"),engineeringDays:num("engDays"),valuePerOutcome:num("value"),sourceType:textv("sourceType"),sourceRef:textv("sourceRef"),evidenceOwner:textv("evidenceOwner"),limitations:textv("limitations"),dependencies:textv("dependencies"),recommendation:state.recommendation,rationale:textv("rationale"),output:state.last?JSON.parse(JSON.stringify(state.last)):null,formulaVersion:"1.0"};
+return {id:"ticket-"+Date.now(),title:textv("title")||"Untitled ticket",scopeType:state.scope,eligible:num("eligible"),horizon:num("horizon"),scopeFilters:{product:textv("scopeProduct"),device:textv("scopeDevice"),geography:textv("scopeGeo"),channel:textv("scopeChannel"),journey:textv("scopeJourney"),exclusions:textv("scopeExclusions"),totalVolume:num("totalVolume"),eligibleShare:num("eligibleShare")},obligation:state.obligation,model:state.model,inputs:collectInputs(),cost:num("cost"),cash:num("cash"),engineeringDays:num("engDays"),valuePerOutcome:num("value"),sourceType:textv("sourceType"),sourceRef:textv("sourceRef"),evidenceOwner:textv("evidenceOwner"),limitations:textv("limitations"),dependencies:textv("dependencies"),recommendation:state.recommendation,rationale:textv("rationale"),output:state.last?JSON.parse(JSON.stringify(state.last)):null,formulaVersion:"1.0"};
 }
 function freezeSnapshot(){
 var rec=ticketRecord();rec.revisionId="rev-"+Date.now();rec.timestamp=new Date().toISOString();state.snapshots.push(JSON.parse(JSON.stringify(rec)));document.getElementById("snapshotStatus").textContent="Frozen: "+rec.title+" at "+rec.timestamp+". Editing the desk will not rewrite this snapshot.";alert("Decision frozen. Review it later without rewriting history.")
