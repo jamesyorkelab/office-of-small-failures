@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Work Director — Define AI Work, Human Review & Guardrails</title>
+<meta name="description" content="A free browser tool for directing AI work: define the goal, boundaries, delegated work, human review checkpoints and what good looks like. Not another prompt generator.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://officeofsmallfailures.com/ai-work-director/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/osf.css">
+<meta property="og:title" content="AI Work Director — The skill isn't prompting. It's direction.">
+<meta property="og:description" content="Turn a vague AI task into a clear division of labour between the machine and the human.">
+<meta property="og:url" content="https://officeofsmallfailures.com/ai-work-director/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+{"@type":"SoftwareApplication","name":"AI Work Director","url":"https://officeofsmallfailures.com/ai-work-director/","applicationCategory":"BusinessApplication","operatingSystem":"Web browser","isAccessibleForFree":true,"description":"A browser-based tool for defining AI task goals, boundaries, delegated work, human review checkpoints and quality criteria.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}},
+{"@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is AI Work Director a prompt generator?","acceptedAnswer":{"@type":"Answer","text":"No. It creates a work brief and review plan. The point is to decide what the AI should do, what a human must check and what must not be delegated."}},
+{"@type":"Question","name":"What does AI Work Director produce?","acceptedAnswer":{"@type":"Answer","text":"It produces a concise AI work brief, a human review checklist, delegation boundaries and a definition of done."}},
+{"@type":"Question","name":"Does it send my work to an AI model?","acceptedAnswer":{"@type":"Answer","text":"No. The tool runs locally in the browser and does not call an external AI model."}}
+]}]}</script>
+<style>
+:root{--accent:#b99cff;--accent2:#ffe260;--good:#9de7a0;--warn:#ffad66}
+.director{max-width:1000px;margin:auto}.progress{border:2px solid var(--line);background:#fff;padding:10px;margin-bottom:14px}.track{height:14px;border:2px solid var(--line);background:#fff}.fill{height:100%;width:0;background:var(--accent);transition:width .2s}.meta{display:flex;justify-content:space-between;gap:8px;font-size:9px;text-transform:uppercase;font-weight:900;margin-top:7px}
+.step{display:none;border:2px solid var(--line);background:var(--panel);box-shadow:6px 6px 0 var(--line)}.step.active{display:block}.step-head{border-bottom:2px solid var(--line);background:#e9e0cf;padding:11px 13px;font-size:10px;font-weight:900;text-transform:uppercase}.step-body{padding:18px}
+.step h2{font-family:Arial Black,Impact,sans-serif;text-transform:uppercase;font-size:clamp(30px,5vw,48px);line-height:.95;margin:0 0 10px}.prompt{font-size:15px;line-height:1.5}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}.choice{border:2px solid var(--line);background:#fff;padding:14px;cursor:pointer;text-align:left;font-weight:900;min-height:98px}.choice small{display:block;font-weight:400;line-height:1.35;margin-top:5px}.choice.selected{background:var(--accent2);transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--line)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.chip{border:2px solid var(--line);background:#fff;padding:8px 10px;cursor:pointer;font-weight:900;font-size:10px}.chip.selected{background:var(--accent)}
+.nav{display:flex;justify-content:space-between;gap:8px;margin-top:16px}.nav button[disabled]{opacity:.35}
+.result-shell{display:none;border:2px solid var(--line);background:var(--panel);box-shadow:7px 7px 0 var(--line);margin-top:18px}.result-shell.show{display:block}.result-head{background:var(--accent);padding:18px;border-bottom:2px solid var(--line)}.result-body{padding:18px}
+.brief{border:2px solid var(--line);background:#fff;padding:14px;white-space:pre-wrap;line-height:1.6;font-size:11px}.checkpoint{border:2px solid var(--line);padding:10px;background:#fff;margin:8px 0}.checkpoint b{display:block;text-transform:uppercase;font-size:9px;margin-bottom:4px}.boundary{background:var(--accent2)}.sharebox{border:2px solid var(--line);background:var(--good);padding:14px;margin-top:14px}
+.optional{border:2px dashed var(--line);background:#fff;margin-top:14px}.optional summary{padding:11px;cursor:pointer;font-weight:900;text-transform:uppercase}.optional .inner{padding:0 11px 11px}
+@media(max-width:760px){.choices{grid-template-columns:1fr}.choice{min-height:auto}.step-body{padding:14px}}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="top"><a href="/">Office of Small Failures / Case File 010</a><span class="status">AI direction experiment</span></header>
+<section class="hero">
+<div><span class="kicker">Human / machine work design</span><h1>AI Work Director</h1><p class="lede">The skill isn't prompting. It's direction. Decide what the AI should do, what the human must own, and where review has to happen.</p></div>
+<aside class="memo">A good prompt can still produce bad work if nobody defined the job, the boundaries or the review.</aside>
+</section>
+<div class="rule">This is not a prompt generator. It creates a work brief and human review plan. Nothing is sent to an AI model.</div>
+
+<div class="director">
+<div class="progress"><div class="track"><div class="fill" id="fill"></div></div><div class="meta"><span id="stepText">Step 1 of 6</span><span id="timeText">About 60 seconds</span></div></div>
+
+<section class="step active" data-step="0">
+<div class="step-head">1 / 6 — The job</div><div class="step-body">
+<h2>What kind of work is this?</h2><p class="prompt">Choose the closest shape of task. You can add a short goal afterwards.</p>
+<div class="choices">
+<button class="choice" data-key="taskType" data-value="research"><strong>Research / synthesis</strong><small>Gather, compare, summarise, find patterns.</small></button>
+<button class="choice" data-key="taskType" data-value="drafting"><strong>Drafting / editing</strong><small>Create or reshape written material.</small></button>
+<button class="choice" data-key="taskType" data-value="analysis"><strong>Analysis / decision support</strong><small>Work through data, options or trade-offs.</small></button>
+<button class="choice" data-key="taskType" data-value="operations"><strong>Operations / workflow</strong><small>Repeatable admin, transformation or routing.</small></button>
+<button class="choice" data-key="taskType" data-value="coding"><strong>Code / build</strong><small>Create, modify or test software.</small></button>
+<button class="choice" data-key="taskType" data-value="other"><strong>Something else</strong><small>The method still works.</small></button>
+</div>
+<details class="optional"><summary>Optional: name the goal</summary><div class="inner"><input id="goal" placeholder="e.g. turn interview notes into evidence-backed themes"></div></details>
+<div class="nav"><span></span><button class="btn primary" onclick="next()" disabled>Next →</button></div>
+</div></section>
+
+<section class="step" data-step="1">
+<div class="step-head">2 / 6 — Delegation</div><div class="step-body">
+<h2>What can the AI actually own?</h2><p class="prompt">Choose the highest level of delegation that feels safe for this job.</p>
+<div class="choices">
+<button class="choice" data-key="delegation" data-value="assist"><strong>Assist</strong><small>Generate options, structure material, surface questions. Human makes the work.</small></button>
+<button class="choice" data-key="delegation" data-value="draft"><strong>Draft</strong><small>AI makes a first pass. Human must substantially review before use.</small></button>
+<button class="choice" data-key="delegation" data-value="execute"><strong>Execute bounded steps</strong><small>AI may complete defined low-risk steps inside clear limits.</small></button>
+</div>
+<div class="nav"><button class="btn" onclick="back()">← Back</button><button class="btn primary" onclick="next()" disabled>Next →</button></div>
+</div></section>
+
+<section class="step" data-step="2">
+<div class="step-head">3 / 6 — Human judgement</div><div class="step-body">
+<h2>Where must a human stay in charge?</h2><p class="prompt">Pick all that matter. These become review checkpoints.</p>
+<div class="chips" id="reviewChips">
+<button class="chip" data-review="facts">Facts / evidence</button><button class="chip" data-review="strategy">Strategy / prioritisation</button><button class="chip" data-review="tone">Tone / judgement</button><button class="chip" data-review="risk">Risk / compliance</button><button class="chip" data-review="code">Code / technical correctness</button><button class="chip" data-review="final">Final approval</button>
+</div>
+<div class="nav"><button class="btn" onclick="back()">← Back</button><button class="btn primary" onclick="next()">Next →</button></div>
+</div></section>
+
+<section class="step" data-step="3">
+<div class="step-head">4 / 6 — Non-delegables</div><div class="step-body">
+<h2>What must the AI not do?</h2><p class="prompt">Select the boundaries that apply.</p>
+<div class="chips" id="noChips">
+<button class="chip" data-no="invent">Invent facts or sources</button><button class="chip" data-no="publish">Publish / send externally</button><button class="chip" data-no="decide">Make the final decision</button><button class="chip" data-no="sensitive">Use confidential data</button><button class="chip" data-no="irreversible">Take irreversible actions</button><button class="chip" data-no="legal">Make legal / compliance judgement</button>
+</div>
+<div class="nav"><button class="btn" onclick="back()">← Back</button><button class="btn primary" onclick="next()">Next →</button></div>
+</div></section>
+
+<section class="step" data-step="4">
+<div class="step-head">5 / 6 — What good looks like</div><div class="step-body">
+<h2>How will you judge the output?</h2><p class="prompt">Choose the qualities that matter most.</p>
+<div class="chips" id="qualityChips">
+<button class="chip" data-quality="accurate">Accurate</button><button class="chip" data-quality="traceable">Traceable to evidence</button><button class="chip" data-quality="useful">Actionable / useful</button><button class="chip" data-quality="clear">Clear</button><button class="chip" data-quality="complete">Complete enough</button><button class="chip" data-quality="original">Distinct / original</button><button class="chip" data-quality="safe">Safe / reversible</button>
+</div>
+<details class="optional"><summary>Optional: add one hard constraint</summary><div class="inner"><input id="constraint" placeholder="e.g. use only the attached research, no web sources"></div></details>
+<div class="nav"><button class="btn" onclick="back()">← Back</button><button class="btn primary" onclick="next()">Next →</button></div>
+</div></section>
+
+<section class="step" data-step="5">
+<div class="step-head">6 / 6 — Review rhythm</div><div class="step-body">
+<h2>When should the human review?</h2><p class="prompt">Do not wait until the end if a wrong turn would be expensive.</p>
+<div class="choices">
+<button class="choice" data-key="rhythm" data-value="end"><strong>At the end</strong><small>Low-risk, easy to reverse, cheap to redo.</small></button>
+<button class="choice" data-key="rhythm" data-value="mid"><strong>Midpoint + end</strong><small>Check direction before too much work accumulates.</small></button>
+<button class="choice" data-key="rhythm" data-value="gated"><strong>Stage gates</strong><small>Human approval before important transitions or actions.</small></button>
+</div>
+<div class="nav"><button class="btn" onclick="back()">← Back</button><button class="btn dark" onclick="finish()" disabled>Direct the work →</button></div>
+</div></section>
+
+<section class="result-shell" id="resultShell">
+<div class="result-head"><div class="score" style="font-size:42px">WORK DIRECTED</div><div class="help" style="color:#111">A division of labour, not a magic prompt.</div></div>
+<div class="result-body">
+<div class="grid3">
+<div class="metric"><span>AI role</span><b id="roleOut">—</b></div><div class="metric"><span>Human reviews</span><b id="reviewCount">—</b></div><div class="metric"><span>Boundary count</span><b id="boundaryCount">—</b></div>
+</div>
+<h3>AI work brief</h3><div class="brief" id="brief"></div>
+<h3>Human review checkpoints</h3><div id="checkpoints"></div>
+<div class="checkpoint boundary"><b>Do not delegate</b><span id="boundaries"></span></div>
+<div class="sharebox"><b>Take the brief into the real work</b><p>Copy it into your task, project note or AI conversation — then keep the human checkpoints intact.</p><button class="btn dark" onclick="copyBrief()">Copy work brief</button><button class="btn" onclick="shareResult()">Share the idea</button><button class="btn" onclick="restart()">Direct another task</button></div>
+</div>
+</section>
+</div>
+
+<section class="seo">
+<h2>How to direct AI work instead of just writing prompts</h2>
+<p>AI Work Director separates the job into a goal, delegation level, non-delegable boundaries, quality criteria and human review checkpoints. It is designed for people using AI inside real work where the output still needs judgement.</p>
+<h3>The skill isn't prompting. It's direction.</h3>
+<p>A clever instruction cannot compensate for a badly defined job. Direction means deciding what the machine is allowed to do, where it should stop, what evidence it needs and which decisions still belong to a person.</p>
+<h3>Human review is part of the workflow</h3>
+<p>Review should happen where errors become expensive: before publication, before irreversible actions, when evidence is weak, or when strategic judgement matters.</p>
+<div class="faq"><h2>AI Work Director FAQs</h2>
+<details><summary>Is this a prompt generator?</summary><p>No. It creates a task brief and division of labour. You can use that brief with any suitable AI system.</p></details>
+<details><summary>Does the tool call an AI model?</summary><p>No. It runs entirely in the browser.</p></details>
+<details><summary>Why define what must not be delegated?</summary><p>Because safe and useful AI work is partly about boundaries: decisions, evidence, confidential information, irreversible actions and final accountability.</p></details>
+</div></section>
+<footer class="footer">Office of Small Failures / AI Work Director / The skill isn't prompting. It's direction. / <a href="/contact/">Contact</a></footer>
+</div>
+<script>
+const answers={reviews:[],nos:[],qualities:[]};let step=0,result=null;const steps=[...document.querySelectorAll('.step')];
+document.querySelectorAll('.choice').forEach(btn=>btn.addEventListener('click',()=>{const k=btn.dataset.key;answers[k]=btn.dataset.value;btn.parentElement.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected');btn.closest('.step').querySelector('.nav .btn:last-child').disabled=false}));
+function toggleChip(btn,key,val){btn.classList.toggle('selected');const a=answers[key];const i=a.indexOf(val);if(i>=0)a.splice(i,1);else a.push(val)}
+document.querySelectorAll('[data-review]').forEach(b=>b.onclick=()=>toggleChip(b,'reviews',b.dataset.review));
+document.querySelectorAll('[data-no]').forEach(b=>b.onclick=()=>toggleChip(b,'nos',b.dataset.no));
+document.querySelectorAll('[data-quality]').forEach(b=>b.onclick=()=>toggleChip(b,'qualities',b.dataset.quality));
+function render(){steps.forEach((s,i)=>s.classList.toggle('active',i===step));fill.style.width=(step/6*100)+'%';stepText.textContent='Step '+(step+1)+' of 6';timeText.textContent=step<3?'About 60 seconds':step<5?'Nearly there':'Final decision';window.scrollTo({top:document.querySelector('.director').offsetTop-12,behavior:'smooth'})}
+function next(){if(step<5){step++;render()}}function back(){if(step>0){step--;render()}}
+const labels={facts:'Verify factual claims, sources and evidence before use.',strategy:'Human decides priorities, trade-offs and strategic recommendations.',tone:'Human checks tone, nuance and whether the judgement fits the context.',risk:'Human reviews risk, compliance and consequences before action.',code:'Human tests technical correctness, edge cases and failure modes.',final:'A named human gives final approval before the output is used.'};
+const noLabels={invent:'Do not invent facts, evidence or sources.',publish:'Do not publish, send or contact people without human approval.',decide:'Do not make the final business decision.',sensitive:'Do not use confidential or sensitive information in an unsuitable system.',irreversible:'Do not take irreversible actions without human approval.',legal:'Do not make the final legal or compliance judgement.'};
+const qualityLabels={accurate:'accurate',traceable:'traceable to evidence',useful:'actionable and useful',clear:'clear',complete:'complete enough for the task',original:'distinct rather than generic',safe:'safe and reversible'};
+function finish(){
+const goal=document.getElementById('goal').value.trim()||('Complete the '+(answers.taskType||'defined')+' task');
+const constraint=document.getElementById('constraint').value.trim();
+const role=answers.delegation==='execute'?'Execute bounded steps':answers.delegation==='draft'?'Produce a draft':'Assist the human';
+const quals=answers.qualities.length?answers.qualities.map(x=>qualityLabels[x]).join(', '):'fit for the stated goal and checked by a human';
+const reviewItems=answers.reviews.length?answers.reviews.map(x=>labels[x]):['A human reviews the result before it is used.'];
+const nos=answers.nos.length?answers.nos.map(x=>noLabels[x]):['Do not go beyond the explicitly delegated work.'];
+const rhythm=answers.rhythm==='gated'?'Use stage gates: stop for human approval before important transitions.':answers.rhythm==='mid'?'Pause for a midpoint direction check, then a final review.':'Complete the bounded work, then stop for final human review.';
+const txt='GOAL\\n'+goal+'\\n\\nAI ROLE\\n'+role+'. Work only within the defined task.\\n\\nDEFINITION OF DONE\\nThe output should be '+quals+'.'+(constraint?'\\nHard constraint: '+constraint+'.':'')+'\\n\\nHUMAN REVIEW RHYTHM\\n'+rhythm+'\\n\\nDO NOT DELEGATE\\n- '+nos.join('\\n- ');
+result={text:txt,reviews:reviewItems,nos,role};roleOut.textContent=role;reviewCount.textContent=reviewItems.length;boundaryCount.textContent=nos.length;brief.textContent=txt;checkpoints.innerHTML=reviewItems.map((x,i)=>'<div class="checkpoint"><b>Checkpoint '+(i+1)+'</b>'+x+'</div>').join('');boundaries.textContent=nos.join(' ');steps.forEach(x=>x.classList.remove('active'));fill.style.width='100%';stepText.textContent='Complete';timeText.textContent='Work brief issued';resultShell.classList.add('show');resultShell.scrollIntoView({behavior:'smooth',block:'start'})
+}
+async function copyBrief(){if(!result)return;const text=result.text+'\\n\\nHUMAN REVIEW CHECKPOINTS\\n- '+result.reviews.join('\\n- ');try{await navigator.clipboard.writeText(text);alert('Work brief copied.')}catch(e){prompt('Copy this:',text)}}
+async function shareResult(){const t="The skill isn't prompting. It's direction. I used AI Work Director to define the AI role, human review points and non-delegable boundaries.";if(navigator.share){try{await navigator.share({title:'AI Work Director',text:t,url:location.href});return}catch(e){}}try{await navigator.clipboard.writeText(t+'\\n'+location.href);alert('Share text copied.')}catch(e){prompt('Copy this:',t+'\\n'+location.href)}}
+function restart(){answers.reviews=[];answers.nos=[];answers.qualities=[];delete answers.taskType;delete answers.delegation;delete answers.rhythm;document.querySelectorAll('.choice,.chip').forEach(x=>x.classList.remove('selected'));document.querySelectorAll('.step .nav .btn:last-child').forEach(x=>{if(x.textContent.indexOf('Next')>=0||x.textContent.indexOf('Direct')>=0)x.disabled=true});document.getElementById('goal').value='';document.getElementById('constraint').value='';resultShell.classList.remove('show');step=0;render()}
+render();
+</script>
+</body></html>
